@@ -1,6 +1,5 @@
 //pv.component.ts:
 //----------------------
-import { HttpClientModule  } from '@angular/common/http';
 import { HttpClient        } from '@angular/common/http';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule      } from '@angular/common';
@@ -20,7 +19,7 @@ interface ColumnDefinition {
 @Component({
   selector: 'app-pv',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, DataTableComponent],
+  imports: [CommonModule, DataTableComponent],
   templateUrl: './pv.component.html',
   styleUrls: ['./pv.component.scss'],
 })
@@ -56,6 +55,13 @@ export class PvComponent implements OnInit {
                private http: HttpClient ) {}
 
   ngOnInit() {
+
+
+      this.http.get('https://jsonplaceholder.typicode.com/todos/1').subscribe(
+        response => console.log('HTTP response:', response),
+        error => console.error('HTTP error:', error)
+      );
+
     this.fetchData();
   }
   

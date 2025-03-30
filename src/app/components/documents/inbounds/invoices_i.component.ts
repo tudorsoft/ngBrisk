@@ -1,6 +1,5 @@
 //invoices_i.component.ts:
 //----------------------
-import { HttpClientModule  } from '@angular/common/http';
 import { HttpClient        } from '@angular/common/http';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule      } from '@angular/common';
@@ -19,7 +18,7 @@ interface ColumnDefinition {
 @Component({
   selector: 'app-invoices-i',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, DataTableComponent],
+  imports: [CommonModule, DataTableComponent],
   templateUrl: './invoices_i.component.html',
   styleUrls: ['./invoices_i.component.scss'],
 })

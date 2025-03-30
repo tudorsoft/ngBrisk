@@ -48,6 +48,12 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+
+
+    //this.loadingService.show();
+    //setTimeout(() => this.loadingService.hide(), 5000);
+
+
     try {
       await this.storageService.loadConfig();
       this.cDatabaseUrl = this.storageService.cDatabaseUrl;

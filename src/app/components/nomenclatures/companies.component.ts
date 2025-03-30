@@ -1,6 +1,5 @@
 //companies.component.ts:
 //----------------------
-import { HttpClientModule } from '@angular/common/http';
 import { HttpClient        } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule      } from '@angular/common';
@@ -9,7 +8,7 @@ import { StorageService    } from '../../services/storage.service';
 @Component({
   selector: 'app-companies',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: './companies.component.html',
   styleUrls: ['./companies.component.scss'],
 })
