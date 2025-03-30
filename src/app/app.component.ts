@@ -14,6 +14,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MenuItem } from './components/menu/menu-tree'; 
 import { HomeComponent  } from './components/home.component';
 import { LoginComponent } from './components/login.component'; 
+import { LoadingService } from './services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -33,8 +34,9 @@ export class AppComponent implements OnInit {
 
   constructor(
       public authService: AuthService,
-      private menuStateService: MenuStateService,
       public storageService: StorageService, 
+      public loadingService: LoadingService,
+      private menuStateService: MenuStateService,
       private navigationService: NavigationService,
       private menuTree: MenuTree,
       private router: Router, 

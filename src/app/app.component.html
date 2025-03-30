@@ -1,4 +1,7 @@
 <!--app.component.html-->
+<div class="loading-overlay" *ngIf="loadingService.loading$ | async">
+  <div class="spinner"></div>
+</div>
 <div class="app-container" [class.no-menu]="!authService.isLoggedIn()">
   <header class="w3-container w3-padding-small fixed-header">
     <button *ngIf="authService.isLoggedIn()" class="hamburger w3-margin-right" (click)="toggleMenu()">

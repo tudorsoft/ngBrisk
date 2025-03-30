@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { AuthGuard } from '../../services/auth.guard';
 import { Router, NavigationEnd } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { filter } from 'rxjs/operators';
 import { StorageService } from '../../services/storage.service';
 import { MenuService } from '../../services/menu.service';
 import { MenuStateService } from '../../services/menu-state.service';
@@ -51,16 +52,21 @@ export class MenuComponent implements OnInit {
       });
     }
 
-  ngOnInit() {
-    this.storageService.cDatabaseUrl$.subscribe((url) => {
-      if (url) {
-        this.menuService.getMenu().subscribe((menuItems) => {
-          this.menuTree = menuItems;
-          const routes = this.menuTreeService.createRoutes(menuItems);
+    ngOnInit() {
+      this.storageService.cDatabaseUrl$
+        .pipe(filter(url => url !== '')) // Așteaptă ca URL-ul să fie definit
+        .subscribe((url) => {
+          this.menuService.getMenu().subscribe((menuItems) => {
+            if (menuItems && menuItems.length > 0) {
+              this.menuTree = menuItems;
+              // Dacă este necesar, actualizează și rutele dinamice:
+              const routes = this.menuTreeService.createRoutes(menuItems);
+            } else {
+              console.warn('Nu s-au găsit elemente de meniu de la API');
+            }
+          });
         });
-      }
-    });
-  }
+    }
 
   navigateTo(route: string, item: MenuItem) {
     localStorage.setItem('redirectUrl', route);
@@ -68,6 +74,9 @@ export class MenuComponent implements OnInit {
       this.navigationService.navigateTo(route);
     } else {
       this.navigationService.navigateTo('/login');
+    }
+    if (isPlatformBrowser(this.platformId) && window.innerWidth < 992) {
+      this.menuStateService.closeMenu();
     }
   }
 
