@@ -2,7 +2,7 @@
 //-----------------------
 import { Component, Input, OnInit, AfterViewChecked, Output, EventEmitter, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -41,7 +41,8 @@ export class DataTableComponent implements OnInit {
     filterDatabase: any[] = []; // Obiect pentru a stoca filtrele în format { name, value }
     //filterForm!: FormGroup; // Marchează filterForm ca fiind asignată ulterior
 
-    private filterFormSubject = new BehaviorSubject<FormGroup | null>(null);
+    //private filterFormSubject = new BehaviorSubject<FormGroup | null>(null);
+    public filterFormSubject  = new BehaviorSubject<FormGroup>(new FormGroup({}));
     filterForm$ = this.filterFormSubject.asObservable();
 
 
@@ -89,8 +90,18 @@ export class DataTableComponent implements OnInit {
         }
     }
     
-
     private initializeFilterFields(): void {
+        const group: { [key: string]: FormControl } = {};
+      
+        this.filterFields.forEach(field => {
+          group[field.name] = new FormControl(field.defaultValue ?? '');
+        });
+      
+        const form = new FormGroup(group);
+        this.filterFormSubject.next(form);
+      }
+
+    /* private initializeFilterFields(): void {
         const group: { [key: string]: any } = {};
     
         this.filterFields.forEach(field => {
@@ -98,7 +109,7 @@ export class DataTableComponent implements OnInit {
         });
     
         this.filters = this.fb.group(group);
-      }
+      }*/
 
     toggleColumn(column: string) {
       const index = this.selectedColumns.indexOf(column);

@@ -41,6 +41,7 @@ export class PvComponent implements OnInit {
       defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() === 0 ? 11 : new Date().getMonth() - 1, 1)) },
     { label: '', type: 'date', name: 'cDataS', 
       defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)) },
+    //{ label: 'Client', type: 'text', name: 'cClient'},
   ];
 
   @Output() dataUpdated = new EventEmitter<any[]>();
