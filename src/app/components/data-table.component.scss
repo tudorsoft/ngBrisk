@@ -83,7 +83,7 @@ th .w3-input {
     display: flex;
     justify-content: space-between; /* Aliniază titlul și butonul la extremități */
     align-items: center; /* Centrează vertical elementele */
-    padding-right: 14px;
+    //padding-right: 14px;
 }
 
 .text-left {
@@ -106,10 +106,10 @@ tbody {
   display: flex;
   align-items: center;       /* Aliniere verticală la centru */
   justify-content: space-between; /* Distribuie spațiul între elemente */
-  gap: 1rem;
+  //gap: 1rem;
   width: 100%;
 
-  padding-bottom: 8px;
+  padding: 8px;
   background-color: #f8f9fa; // Fundal deschis
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Umbră subtilă

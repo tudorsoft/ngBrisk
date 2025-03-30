@@ -37,9 +37,9 @@ export class PvComponent implements OnInit {
   ];
   // Definim câmpurile de filtrare specifice pentru această componentă
   filterFields = [
-    { label: 'De la', type: 'date', name: 'cDataI', 
+    { label: '', type: 'date', name: 'cDataI', 
       defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() === 0 ? 11 : new Date().getMonth() - 1, 1)) },
-    { label: 'până la', type: 'date', name: 'cDataS', 
+    { label: '', type: 'date', name: 'cDataS', 
       defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)) },
   ];
 
