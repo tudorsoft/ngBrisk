@@ -33,6 +33,7 @@ export class DataTableComponent implements OnInit {
     filters: FormGroup = new FormGroup({});
     @Output() filterChange = new EventEmitter<any>(); // Emitem valorile câmpurilor de filtrare
     @Output() filterDatabaseChange = new EventEmitter<any[]>(); // Emitem filterDatabase către componentele apelatoare
+    @Output() formReady = new EventEmitter<FormGroup>();
   
     searchValues: string[] = [];
     selectedColumns: string[] = [];
@@ -99,17 +100,9 @@ export class DataTableComponent implements OnInit {
       
         const form = new FormGroup(group);
         this.filterFormSubject.next(form);
+        
+        this.formReady.emit(form); // ✅ Emitere către componenta părinte
       }
-
-    /* private initializeFilterFields(): void {
-        const group: { [key: string]: any } = {};
-    
-        this.filterFields.forEach(field => {
-          group[field.name] = [field.defaultValue || ''];
-        });
-    
-        this.filters = this.fb.group(group);
-      }*/
 
     toggleColumn(column: string) {
       const index = this.selectedColumns.indexOf(column);

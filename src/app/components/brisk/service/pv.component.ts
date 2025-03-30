@@ -3,6 +3,7 @@
 import { HttpClient        } from '@angular/common/http';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule      } from '@angular/common';
+import { FormGroup } from '@angular/forms';
 import { StorageService    } from '../../../services/storage.service';
 import { ErrorService      } from '../../../services/error.service';
 import { DataTableComponent} from '../../data-table.component';
@@ -69,6 +70,7 @@ export class PvComponent implements OnInit {
     if (apiUrl !== '') {
       const fullUrl = apiUrl + '/wngPv';
       const body: { [key: string]: any } = {};
+      console.log('filterDatabase ', filterDatabase);
       if (filterDatabase) {
         filterDatabase.forEach((filter) => {
           if (filter.value) {
@@ -112,5 +114,14 @@ export class PvComponent implements OnInit {
   // Funcția care este apelată când filterDatabase se schimbă
   onFilterDatabaseChange(filterDatabase: any[]) {
     this.fetchData(filterDatabase); // Trimitem filterDatabase către fetchData
+  }
+
+  onFormReady(form: FormGroup): void {
+    const filterDatabase = this.filterFields.map(field => ({
+      name: field.name,
+      value: form.get(field.name)?.value || '',
+    }));
+  
+    this.fetchData(filterDatabase); // ✅ apel doar când formularul e gata
   }
 }
