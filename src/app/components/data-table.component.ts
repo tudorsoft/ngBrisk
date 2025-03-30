@@ -30,6 +30,7 @@ export class DataTableComponent implements OnInit {
     @Output() resetFilters = new EventEmitter<void>(); // Eveniment pentru resetarea filtrelor
 
     @Input() filterFields: any[] = []; // Câmpurile de filtrare
+    filters: FormGroup = new FormGroup({});
     @Output() filterChange = new EventEmitter<any>(); // Emitem valorile câmpurilor de filtrare
     @Output() filterDatabaseChange = new EventEmitter<any[]>(); // Emitem filterDatabase către componentele apelatoare
   
@@ -67,9 +68,13 @@ export class DataTableComponent implements OnInit {
 
         this.searchValues = Array(this.columns.length).fill('');
         this.selectedColumns = this.columns.map(col => col.name);
-        this.filterFields.forEach((field) => {
-            this.filterValues[field.name] = ''; // Inițializează valorile câmpurilor de filtrare
-        });
+
+
+        this.initializeFilterFields();
+
+        //this.filterFields.forEach((field) => {
+        //    this.filterValues[field.name] = ''; // Inițializează valorile câmpurilor de filtrare
+        //});
     }
   
     ngOnChanges(changes: SimpleChanges) {
@@ -84,6 +89,17 @@ export class DataTableComponent implements OnInit {
         }
     }
     
+
+    private initializeFilterFields(): void {
+        const group: { [key: string]: any } = {};
+    
+        this.filterFields.forEach(field => {
+          group[field.name] = [field.defaultValue || ''];
+        });
+    
+        this.filters = this.fb.group(group);
+      }
+
     toggleColumn(column: string) {
       const index = this.selectedColumns.indexOf(column);
       if (index > -1) {
