@@ -85,17 +85,17 @@ th .w3-input {
     padding-right: 14px;
 }
 
-.table-top .refresh-button {
+.table-filter-refresh .refresh-button {
     background-color: var(--main-blue0);
     border: none;
     padding: 10px;
     cursor: pointer;
     border-radius: 5px;
 }
-.table-top .refresh-button:hover {
+.table-filter-refresh .refresh-button:hover {
     background-color:var(--main-blue2);
 }
-.table-top .refresh-button i {
+.table-filter-refresh .refresh-button i {
   color: white;
 }
 .text-left {

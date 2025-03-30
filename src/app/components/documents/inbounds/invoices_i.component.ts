@@ -17,7 +17,7 @@ interface ColumnDefinition {
 
 @Component({
   selector: 'app-invoices-i',
-  standalone: true,
+  //standalone: true,
   imports: [CommonModule, DataTableComponent],
   templateUrl: './invoices_i.component.html',
   styleUrls: ['./invoices_i.component.scss'],

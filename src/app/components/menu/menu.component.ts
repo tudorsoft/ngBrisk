@@ -16,7 +16,7 @@ import { MenuItem } from '../../services/menu.service';
 
 @Component({
   selector: 'app-menu',
-  standalone: true, 
+  //standalone: true, 
   imports: [CommonModule],
   providers: [AuthGuard],
   templateUrl: './menu.component.html',

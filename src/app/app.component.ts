@@ -18,7 +18,7 @@ import { LoadingService } from './services/loading.service';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
+  //standalone: true,
   imports: [CommonModule, RouterModule, MenuComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'] 

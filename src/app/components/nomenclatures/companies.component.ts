@@ -7,7 +7,7 @@ import { StorageService    } from '../../services/storage.service';
 
 @Component({
   selector: 'app-companies',
-  standalone: true,
+  //standalone: true,
   imports: [CommonModule],
   templateUrl: './companies.component.html',
   styleUrls: ['./companies.component.scss'],

@@ -9,7 +9,6 @@ import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -20,11 +19,9 @@ export class LoginComponent {
 
   constructor(
       public authService: AuthService, 
+      public storageService: StorageService,
       private navigationService: NavigationService,
-      public storageService: StorageService
-    ) {
-    
-    }
+    ) { }
 
     ngOnInit() {
       this.authService.loginStatus.subscribe(isLoggedIn => {
@@ -40,6 +37,5 @@ export class LoginComponent {
 
     login() {
       this.authService.login(this.username, this.password);
-  }
-
+    }
 }

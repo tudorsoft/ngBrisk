@@ -1,10 +1,15 @@
 <!-- data-table.component.html -->
 <div class="table-top">
     <h4 class="table-title">{{ title }} <span class="record-count">({{ recordCount }} inreg.)</span></h4>
-    <button class="refresh-button w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
 </div>
 <!-- Filtrele -->
 <div class="table-filter-area w3-container w3-light-grey w3-padding" *ngIf="filterForm$ | async as filterForm">
+    <div class="table-filter-reset w3-left">
+        <button
+          class="w3-button w3-red w3-round"
+          (click)="onResetFilters()"
+        ><i class="fas fa-times"></i></button>
+    </div>    
     <div class="table-filter-fields w3-left">
         <form [formGroup]="filterForm" class="w3-row filter-field">
           <div *ngFor="let field of filterFields" class="">
@@ -25,11 +30,8 @@
           </div>
         </form>
     </div>
-    <div class="table-filter-reset w3-right">
-        <button
-          class="w3-button w3-red w3-round"
-          (click)="onResetFilters()"
-        ><i class="fas fa-times"></i></button>
+    <div class="table-filter-refresh w3-right">
+        <button class="refresh-button w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
     </div>
 </div>
 <div class="table-container">

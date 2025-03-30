@@ -55,13 +55,6 @@ export class PvComponent implements OnInit {
                private http: HttpClient ) {}
 
   ngOnInit() {
-
-
-      this.http.get('https://jsonplaceholder.typicode.com/todos/1').subscribe(
-        response => console.log('jsonplaceholder HTTP response:', response),
-        error => console.error('jsonplaceholder HTTP error:', error)
-      );
-
     this.fetchData();
   }
   
