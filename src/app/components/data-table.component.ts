@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-data-table',
-  standalone: true,
+  //standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss']

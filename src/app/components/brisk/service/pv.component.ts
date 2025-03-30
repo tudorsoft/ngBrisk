@@ -18,7 +18,7 @@ interface ColumnDefinition {
 
 @Component({
   selector: 'app-pv',
-  standalone: true,
+  //standalone: true,
   imports: [CommonModule, DataTableComponent],
   templateUrl: './pv.component.html',
   styleUrls: ['./pv.component.scss'],
