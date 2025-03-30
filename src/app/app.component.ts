@@ -107,7 +107,6 @@ async loadDynamicRoutes(): Promise<void> {
 
   checkScreenWidth() {
     if (isPlatformBrowser(this.platformId)) {
-      console.log('checkScreenWidth called');
       this.isLargeScreen = window.innerWidth >= 992;
       this.isMenuVisible = this.isLargeScreen && this.authService.isLoggedIn();
     }

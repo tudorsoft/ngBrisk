@@ -51,6 +51,7 @@ export class DataTableComponent implements OnInit {
     sortDirection: 'asc' | 'desc' = 'asc'; 
     
     ngOnInit() {
+        
         console.log('ngOnInit - filterFields:', this.filterFields); // Debug
         if (!this.filterFields) {
             console.error('filterFields is not defined');

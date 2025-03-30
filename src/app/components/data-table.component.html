@@ -3,14 +3,14 @@
     <h4 class="table-title">{{ title }} <span class="record-count">({{ recordCount }} inreg.)</span></h4>
 </div>
 <!-- Filtrele -->
-<div class="table-filter-area w3-container w3-light-grey w3-padding" *ngIf="filterForm$ | async as filterForm">
+<div class="table-filter-area w3-container w3-light-grey" *ngIf="filterForm$ | async as filterForm">
     <div class="table-filter-reset w3-left">
         <button
-          class="w3-button w3-red w3-round"
+          class="w3-button w3-round w3-red"
           (click)="onResetFilters()"
         ><i class="fas fa-times"></i></button>
     </div>    
-    <div class="table-filter-fields w3-left">
+    <div class="table-filter-fields">
         <form [formGroup]="filterForm" class="w3-row filter-field">
           <div *ngFor="let field of filterFields" class="">
             <label class="w3-text-dark-grey">{{ field.label }}</label>
@@ -31,10 +31,10 @@
         </form>
     </div>
     <div class="table-filter-refresh w3-right">
-        <button class="refresh-button w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
+        <button class="w3-button w3-round w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
     </div>
 </div>
-<div class="table-container">
+<div class="table-container w3-container">
     <table class="w3-table w3-small w3-striped w3-bordered w3-hoverable">
         <thead>
             <tr class="table-header">

@@ -6,6 +6,7 @@ import { CommonModule      } from '@angular/common';
 import { StorageService    } from '../../../services/storage.service';
 import { ErrorService      } from '../../../services/error.service';
 import { DataTableComponent} from '../../data-table.component';
+import * as DateUtils from '../../../utils/date.utils';
 
 interface ColumnDefinition {
   label: string;
@@ -34,11 +35,12 @@ export class PvComponent implements OnInit {
     //{ label: 'Denumire Furnizor', name: 'supplierName', type: 'text' },
     //{ label: 'Valoare', name: 'amount', type: 'numeric', showTotal: true, decimals: 2 },
   ];
-
   // Definim câmpurile de filtrare specifice pentru această componentă
   filterFields = [
-    { label: 'De la', type: 'date', name: 'cDataI' },
-    { label: 'până la', type: 'date', name: 'cDataS' },
+    { label: 'De la', type: 'date', name: 'cDataI', 
+      defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() === 0 ? 11 : new Date().getMonth() - 1, 1)) },
+    { label: 'până la', type: 'date', name: 'cDataS', 
+      defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)) },
   ];
 
   @Output() dataUpdated = new EventEmitter<any[]>();
@@ -57,7 +59,7 @@ export class PvComponent implements OnInit {
   ngOnInit() {
     this.fetchData();
   }
-  
+
   fetchData(filterDatabase?: any[]) {
     const apiUrl = (this.storageService.cDatabaseUrl.endsWith('/') ? 
                     this.storageService.cDatabaseUrl.slice(0, -1) : 

@@ -19,9 +19,10 @@ thead th {
 }
 
 .table-container {
-    overflow-y: auto; 
-    width: 100%;
-    height: calc(100vh - 110px);
+  max-height: 100vh;  /* sau calc(100vh - [alte elemente fixe], de exemplu: calc(100vh - 120px)) */
+  overflow-y: auto;
+  width: 100%;
+  max-height: calc(100vh - 180px);
 }
 
 .table-header {
@@ -85,19 +86,6 @@ th .w3-input {
     padding-right: 14px;
 }
 
-.table-filter-refresh .refresh-button {
-    background-color: var(--main-blue0);
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-.table-filter-refresh .refresh-button:hover {
-    background-color:var(--main-blue2);
-}
-.table-filter-refresh .refresh-button i {
-  color: white;
-}
 .text-left {
     text-align: left;
 }
@@ -115,25 +103,57 @@ tbody {
 
 
 .table-filter-area {
-  //display: flex;
-  //justify-content: space-between;
-  align-items: flex-end; // Aliniază elementele la partea de jos
-  margin-bottom: 8px;
-  //padding: 15px;
+  display: flex;
+  align-items: center;       /* Aliniere verticală la centru */
+  justify-content: space-between; /* Distribuie spațiul între elemente */
+  gap: 1rem;
+  width: 100%;
+
+  padding-bottom: 8px;
   background-color: #f8f9fa; // Fundal deschis
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Umbră subtilă
 }
 
-.table-filter-fields {
+
+.table-filter-reset,
+.table-filter-fields,
+.table-filter-refresh {
   display: flex;
-  gap: 10px; // Spațiu între câmpuri
-  //align-items: flex-end; // Aliniază elementele la partea de jos
+  align-items: center;
+  cursor: pointer;
 }
 
-.table-filter-reset button {
+.table-filter-fields {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}
+
+.table-filter-reset button,
+.table-filter-refresh button {
+  font-size: 0.8rem;         /* dimensiune mică a textului */
+  padding: 0.3rem 0.6rem;     /* spațiere interioară uniformă */
+  min-width: 40px;          /* lățime minimă uniformă – ajustează după necesitate */
+  box-sizing: border-box;    /* include padding-ul în dimensiuni */
+  border: none;
+  cursor: pointer;
 
 }
+
+.table-filter-reset button i,
+.table-filter-refresh button i {
+  color: white;
+}
+
+.table-filter-reset button:hover,
+.table-filter-refresh button:hover {
+background-color:var(--main-blue2);
+}
+.table-filter-refresh button  {
+  background-color:var(--main-blue0);
+}
+
 
 .filter-field {
   //flex: 1; // Asigură că câmpurile ocupă spațiu egal
