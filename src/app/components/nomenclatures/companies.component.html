@@ -1,0 +1,8 @@
+<h2>Firme</h2>
+<p>Aici este un conținut despre gestionarea firmelor.</p>
+<p>Valoarea cDatabaseUrl: {{ storageService.cDatabaseUrl }}</p>
+<button (click)="fetchData()">Incarca JSON meniu</button>
+<div *ngIf="data.length > 0">
+  <h2>Data from API:</h2>
+  <pre>{{ data | json }}</pre>
+</div>

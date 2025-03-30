@@ -1,0 +1,14 @@
+<!-- invoices_i.component.html -->
+<div *ngIf="filteredData.length; else noData">
+    <app-data-table 
+        [title]       ="'Facturi Furnizori'"
+        [filteredData]="filteredData"
+        [columns]     ="columns"
+        [columnLabels]="columnLabels"
+        (refresh)     ="fetchData()"
+        >
+    </app-data-table>
+</div>
+<ng-template #noData>
+<p>Nu sunt date disponibile.</p>
+</ng-template>

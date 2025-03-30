@@ -1,0 +1,59 @@
+/* login.component.css */
+.login-form {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-form h2 {
+    color: var(--main-blue0); /* Albastru mai închis */
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--main-blue0); /* Albastru mai închis */
+    transition: border-color 0.3s ease;
+}
+
+.login-form input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.login-form input::placeholder {
+    color: #999999;
+}
+
+.login-form button {
+    background-color: var(--main-blue0); /* Albastru mai închis */
+    width: 100%;
+    padding: 12px;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-form button:hover {
+    background-color: #0056b3;
+}
+
+.login-form button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

@@ -1,0 +1,26 @@
+:root {
+    --main-blue0 : #485F99; /* cel mai inchis */
+    --main-blue1 : #617199; /* mai deschis */
+    --main-blue2 : #747d96; /* cel mai deschis */
+
+    --main-white0: #e1e5f0; /* cel mai deschis */
+    --main-white1: #d9dff1; /* mai deschis */
+    --main-white2: #b9bece; /* cel mai inchis */
+  }
+html, body {
+    height: 100%; /* Asigură că html și body ocupă întreaga înălțime */
+    margin: 0; /* Elimină marginile implicite */
+    background-color: var(--main-white0); /* Albastru mai închis */
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Normalizează dimensiunile elementelor */
+}
+
+.fas {
+    color: var(--main-blue0);
+  }
+.fa-bars {
+    font-size: 24px; /* Mărește dimensiunea iconiței */
+  }

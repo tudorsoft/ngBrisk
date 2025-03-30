@@ -1,0 +1,101 @@
+<!-- data-table.component.html -->
+<div class="table-top">
+    <h4 class="table-title">{{ title }} <span class="record-count">({{ recordCount }} inreg.)</span></h4>
+    <button class="refresh-button w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
+</div>
+<!-- Filtrele -->
+<div class="table-filter-area w3-container w3-light-grey w3-padding" *ngIf="filterForm$ | async as filterForm">
+    <div class="table-filter-fields w3-left">
+        <form [formGroup]="filterForm" class="w3-row filter-field">
+          <div *ngFor="let field of filterFields" class="">
+            <label class="w3-text-dark-grey">{{ field.label }}</label>
+            <input
+              *ngIf="field.type === 'text'"
+              class="w3-input w3-border w3-round"
+              type="text"
+              [formControlName]="field.name"
+              placeholder="{{ field.label }}..."
+            />
+            <input
+              *ngIf="field.type === 'date'"
+              class="w3-input w3-border w3-round"
+              type="date"
+              [formControlName]="field.name"
+            />
+          </div>
+        </form>
+    </div>
+    <div class="table-filter-reset w3-right">
+        <button
+          class="w3-button w3-red w3-round"
+          (click)="onResetFilters()"
+        ><i class="fas fa-times"></i></button>
+    </div>
+</div>
+<div class="table-container">
+    <table class="w3-table w3-small w3-striped w3-bordered w3-hoverable">
+        <thead>
+            <tr class="table-header">
+                <th *ngFor="let col of columns; let i = index" 
+                    class="column-title" 
+                    (click)="sortData(col.name)"
+                    [ngStyle]="{'width': getColumnWidth(col.name)}"> <!-- Call the helper method here -->
+                    <span [ngClass]="{'sorted': sortColumn === col.name}">{{ col.label }}</span>
+                    <span *ngIf="sortColumn === col.name" class="arrow">
+                        {{ sortDirection === 'asc' ? '▲' : '▼' }}
+                    </span>
+                </th>
+            </tr>            
+            <tr class="table-search">
+                <th *ngFor="let column of selectedColumns" class="column-search">
+                    <input 
+                        class="w3-input"
+                        type="text" 
+                        [ngModel]="getSearchValue(column)" 
+                        (ngModelChange)="setSearchValue(column, $event); filterData()" 
+                        placeholder="{{ column }}..." />
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let item of filteredData">
+                <td *ngFor="let column of selectedColumns" 
+                    [ngClass]="{'text-right': isNumericColumn(column)}"
+                    [ngStyle]="{'width': getColumnWidth(column)}"> <!-- Call the helper method here -->
+                    <ng-container *ngIf="isNumericColumn(column)">
+                        {{ formatNumber(item[column], column) }} <!-- Format numeric values -->
+                    </ng-container>
+                    <ng-container *ngIf="!isNumericColumn(column)">
+                        {{ item[column] }} <!-- Non-numeric display -->
+                    </ng-container>
+                </td>
+            </tr>
+            <tr *ngIf="showTotals()" [ngClass]="'total-row'">
+                <td *ngFor="let column of selectedColumns" 
+                    [ngClass]="{'text-right': isNumericColumn(column)}"
+                    [ngStyle]="{'width': getColumnWidth(column)}"> <!-- Call the helper method here -->
+                    <ng-container *ngIf="isNumericColumn(column) && canShowTotal(column)">
+                        {{ calculateTotal(column) }} <!-- Show total if column allows -->
+                    </ng-container>
+                    <ng-container *ngIf="!isNumericColumn(column) || !canShowTotal(column)">
+                        {{ '' }} <!-- Empty cell if no total should be shown -->
+                    </ng-container>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+</div>
+
+                <!-- 
+                <div class="w3-col s6">
+                    <h4>Selectați Coloane:</h4>
+                    <div *ngFor="let column of columns" class="search-input">
+                        <label>
+                            <input type="checkbox" [checked]="selectedColumns.includes(column)" (change)="toggleColumn(column)" />
+                            {{ column }}
+                        </label>
+                    </div>
+                </div>
+            -->

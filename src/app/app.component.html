@@ -1,0 +1,42 @@
+<!--app.component.html-->
+<div class="app-container" [class.no-menu]="!authService.isLoggedIn()">
+  <header class="w3-container w3-padding-small fixed-header">
+    <button *ngIf="authService.isLoggedIn()" class="hamburger w3-margin-right" (click)="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="logo ">
+      <img src="/assets/logo.png" alt="Logo" />
+    </div>
+    
+    <div class="header-right">
+      <div clas="user-login-container">
+        <div class="user-login w3-text-white" (click)="toggleUserMenu()">
+          {{ authService.getUser('logged_user') || 'Login' }}
+      </div>
+        <div *ngIf="showUserMenu" class="user-menu w3-card-4">
+          <div class="user-info w3-padding-small">
+              <p class="logged_user" >{{ authService.getUser('logged_name') }}</p>
+              <p class="logged_email"><i class="fas fa-envelope"></i> {{ authService.getUser('logged_email') }}</p>
+          </div>
+          <div class="user-menu-item w3-padding-small" (click)="navigateToProfile()"><i class="fas fa-user"></i> Profil</div>
+          <div class="user-menu-item w3-padding-small" (click)="navigateToSettings()"><i class="fas fa-cog"></i> Configurare</div>
+          <div class="user-menu-item w3-padding-small" (click)="navigateToHelp()"><i class="fas fa-question-circle"></i> Ajutor</div>
+          <div class="user-menu-item w3-padding-small" (click)="logout()"><i class="fas fa-sign-out-alt"></i> Iesire</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="content">
+    <div *ngIf="authService.isLoggedIn()" class="menu-area" [class.visible]="isMenuVisible">
+      <app-menu
+        [isMenuVisible]="isMenuVisible" 
+        (menuToggle)="toggleMenu()"
+        [activeSubmenu]="activeSubmenu"
+        (submenuToggle)="toggleSubmenu($event)">
+      </app-menu>
+    </div>
+    <div class="data-area">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

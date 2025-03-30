@@ -1,0 +1,12 @@
+<h2>Configurare aplicatie</h2>
+
+<div>
+  <label for="urlInput">Introduceti URL:</label>
+  <input id="urlInput" [(ngModel)]="cUrlInput" placeholder="Introduceti URL catre baza de date" />
+  <button (click)="saveURL()">Salvează URL</button>
+</div>
+
+<div>
+  <h3>URL salvat:</h3>
+  <p>{{ cUrlSaved }}</p>
+</div>

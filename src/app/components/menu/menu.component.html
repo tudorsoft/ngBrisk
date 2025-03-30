@@ -1,0 +1,31 @@
+<!-- menu.component.html -->
+<div class="menu" [ngClass]="{'open': isMenuVisible}">
+  <ul>
+    <li *ngFor="let item of menuTree">
+      <span (click)="toggleSubmenu(item)" class="w3-button w3-left-align parent-item optmenu"> <!-- Adaugă clasa parent-item -->
+          <span *ngIf="item.children" >
+            <span *ngIf="activeSubmenu === item" class="arrow">&#x25BC; {{ item.label }}</span> <!-- Săgeată jos &#x25BC; -->
+            <span *ngIf="activeSubmenu !== item" class="arrow">&#x25B6; {{ item.label }}</span> <!-- Săgeată dreapta &#x25B6;-->
+          </span>
+      </span>
+      <ul *ngIf="activeSubmenu === item" >
+        <li *ngFor="let child of item.children" >
+          <span class="w3-button w3-left-align optsubmenu" *ngIf="child.children" (click)="toggleChildSubmenu(child)">
+            <span *ngIf="activeChild === child" class="arrow">&#x25BC; {{ child.label }}</span> <!-- Săgeată jos -->
+            <span *ngIf="activeChild !== child" class="arrow">&#x25B6; {{ child.label }}</span> <!-- Săgeată dreapta -->
+          </span>
+          <a class="w3-button w3-left-align" *ngIf="child.route && !child.children" (click)="navigateTo(child.route, child)">
+            {{ child.label }}
+          </a>
+          <ul *ngIf="activeChild === child" >
+            <li *ngFor="let grandChild of child.children">
+              <a class="w3-button w3-left-align optsubmenu" *ngIf="grandChild.route" (click)="navigateTo(grandChild.route, grandChild)">
+                {{ grandChild.label }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>

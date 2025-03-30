@@ -1,0 +1,154 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.no-menu .content {
+  margin-left: 0 !important; /* Elimină spațiul pentru meniu */
+}
+header {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  //background-color: #f8f9fa; 
+  background-color: var(--main-blue0);
+  padding: 10px 20px; 
+}
+.fixed-header {
+  position: fixed; 
+  top: 0; /* Plasează-l în partea de sus */
+  left: 0;
+  right: 0; 
+  z-index: 1000; /* Asigură că este deasupra altor elemente */
+}
+
+.logo {
+  flex: 0 0 auto; 
+}
+.logo img {
+  height: 40px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  margin-left: auto; 
+}
+
+///////////////////////////
+.user-login-container {
+  position: relative;
+}
+.user-login {
+  background-color: var(--main-blue0);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.user-login:hover {
+  background-color:var(--main-blue2);
+}
+
+.user-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: var(--main-white0);
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+.user-menu-item {
+  cursor: pointer;
+}
+.user-menu-item:hover {
+  background-color: #f2f2f2;
+}
+.user-menu .user-info {
+  border-bottom: 1px solid var(--main-blue0);
+}
+.user-menu .logged_user {
+  color: var(--main-blue0);
+}
+/////////////////////////
+
+.settings {
+  cursor: pointer; 
+}
+
+.content {
+  margin: 0;
+  padding: 0;
+}
+
+.menu-area {
+  position: relative;
+  left: 0;
+  z-index: 1000;
+  display: none;
+}
+.menu-area.visible {
+  display: block;
+}
+
+.data-area {
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-top: 52px;
+  flex: 1; /* Permite containerului să ocupe tot spațiul rămas */
+  overflow-y: hidden;
+  height: calc(100vh - 52px);
+  //box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.30);
+  border: 0px solid var(--main-blue0);
+}
+
+.hamburger {
+  background-color: var(--main-blue0); //#4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 14px 10px 14px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.hamburger i {
+  color: white;
+}
+.hamburger:hover {
+  background-color: var(--main-blue2);
+}
+
+/* Stiluri pentru ecranele mari */
+@media (min-width: 992px) {
+  .hamburger {
+    display: none; 
+  }
+  .menu {
+    display: block;
+  }
+  .content {
+    margin-left: 200px;
+  }
+}
+  
+/* Stiluri pentru ecranele mici */
+@media (max-width: 991px) {
+  .hamburger {
+    display: block;
+  }
+  .menu {
+    display: none; 
+  }
+
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+li {
+  cursor: pointer;
+  padding: 5px 0;
+}
+li:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,44 @@
+.menu {
+  z-index: 1000;
+  position: fixed; 
+  left: 0;
+  top: 52px;
+  width: 200px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+  background-color: var(--main-white0);
+  color: var(--main-blue0); 
+  border-right: 1px solid #ddd;
+  display: none; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); // umbră mai puternică când este deschis
+}
+.menu.open {
+  display: block;
+}
+.optmenu {
+  background-color: var(--main-blue0); //mai inchis
+  color: var(--main-white0); 
+  border: none;
+  cursor: pointer;
+  margin: 2px;
+  padding: 10px 4px 10px 4px;
+}
+.optmenu.w3-button:hover,.optsubmenu:hover,li a:hover {
+  color: var(--main-blue0)  !important;
+  background-color: var(--main-white1) !important; /* sau orice altă culoare dorită */
+}
+.optsubmenu  {
+  margin: 1px;
+  color: var(--main-blue0); 
+  background-color: var(--main-white2); //mai inchis de la alb
+  padding-left: 12px;
+}
+li a {
+  padding-left: 18px; // Indentare pentru subsubmeniuri
+  color: var(--main-blue0); 
+  background-color: var(--main-white2)
+}
+span.w3-button,a.w3-button {
+  display: flex; 
+  transition: background-color 0.3s;
+}

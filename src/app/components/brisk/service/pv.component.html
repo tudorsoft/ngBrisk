@@ -1,0 +1,19 @@
+<!-- pv.component.html -->
+<div *ngIf="filteredData.length; else noData">
+    <app-data-table 
+      [title]="'PROCESE VERBALE'"
+      [filteredData]="filteredData"
+      [columns]="columns"
+      [columnLabels]="columnLabels"
+      [filterFields]="filterFields"
+      (filterChange)="onFilterChange($event)"
+      (filterDatabaseChange)="onFilterDatabaseChange($event)"
+      (resetFilters)="onResetFilters()"
+      [recordCount]="recordCount"
+    >
+    </app-data-table>
+  </div>
+  <ng-template #noData>
+    <p *ngIf="errorMessage; else noDataMessage">{{ errorMessage }}</p>
+    <ng-template #noDataMessage>Nu sunt date disponibile.</ng-template>
+  </ng-template>
