@@ -8,4 +8,5 @@ export interface ColumnDefinition {
     decimals?: number;
     width?: string;
     align?: string;
+    fixed?: string;
   }

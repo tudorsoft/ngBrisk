@@ -20,12 +20,12 @@ import { ColumnDefinition } from '../../type-definition';
 export class PvComponent implements OnInit {
   columns: ColumnDefinition[] = [
     //{ label: 'ID', name: 'id', type: 'numeric', width: '70px' },
-    { label: 'Data', name: 'data_doc', type: 'date' },
-    { label: 'Numar', name: 'numar', type: 'text' },
+    { label: 'Data', name: 'data_doc', type: 'date', fixed: "left" },
+    { label: 'Numar', name: 'numar', type: 'text', fixed: "left" },
     { label: 'Client', name: 'den_firma', type: 'text' },
     { label: 'P.Lucru', name: 'den_plfrm', type: 'text' },
     { label: 'Categ.', name: 'den_comcat', type: 'text' },
-    { label: 'Facturat', name: 'facturat', type: 'check', align: 'center', width: "50px"},
+    { label: 'Facturat', name: 'facturat', type: 'check', align: 'center', width: "50px", fixed: "right"},
     //{ label: 'Valoare', name: 'valoare', type: 'numeric', showTotal: true, decimals: 2 },
   ];
   // Definim câmpurile de filtrare specifice pentru această componentă
