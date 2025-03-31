@@ -10,7 +10,6 @@
 html, body {
     height: 100%; /* Asigură că html și body ocupă întreaga înălțime */
     margin: 0; /* Elimină marginile implicite */
-    min-width: 478px;
     overflow: hidden;
     background-color: var(--main-white0); /* Albastru mai închis */
 }
