@@ -1,12 +1,8 @@
-thead {
-    position: sticky;
-    top: 0;
-}
-
-thead th {
-    background-color: var(--main-blue0);
-    position: sticky;
-    top: 0;
+.table-top {
+  display: flex;
+  justify-content: space-between; /* Aliniază titlul și butonul la extremități */
+  align-items: center; /* Centrează vertical elementele */
+  padding-left: 8px;
 }
 
 .table-title {
@@ -22,54 +18,45 @@ thead th {
   max-height: 100vh;  /* sau calc(100vh - [alte elemente fixe], de exemplu: calc(100vh - 120px)) */
   overflow-y: auto;
   width: 100%;
-  max-height: calc(100vh - 180px);
+  max-height: calc(100vh - 150px);
 }
 
 .table-header {
     position: sticky;
     top: 0; 
     text-align: left;
+    background-color: var(--main-blue0);
+    border: 0;
 }
 .table-header th {
-    background-color: var(--main-blue0);
     color: white;
+    text-align: center;
+    cursor: pointer; 
+    font-weight: normal;
+    padding: 8px 2px 8px 2px;
 }
 
 .table-search {
     position: sticky;
-    top: 0;
+    top: 34px;
     text-align: left; 
+    background-color: var(--main-blue0);
   }
 .table-search th {
-  padding: 0px 1px 4px 4px;
+  padding: 0px 2px 2px 0px;
+  font-weight:lighter; /* Titlurile de coloană bold */
 }
-th .w3-input {
+
+.table-search .w3-input {
     width: 100%; /* Asigură că input-ul se întinde pe întreaga lățime */
     box-sizing: border-box; /* Împiedică depășirea marginilor */
     background-color: var(--main-white0);
-    padding: 2px;
-  }
-
-  .search-input {
-    margin-bottom: 10px; /* Spațiere între câmpurile de căutare */
-  }
+    padding: 6px 2px 6px 2px;
+}
   
-  .column-title {
-    cursor: pointer; 
-    font-weight: normal; /* Titlurile de coloană bold */
-  }
-
-  .column-search {
-    font-weight:lighter; /* Titlurile de coloană bold */
-  }
-
-  .search-input {
-    margin-bottom: 10px; /* Spațiere între câmpurile de căutare */
-  }
-
   thead th .arrow {
     font-weight:bolder;
-    font-size: 14px; /* Aumentează dimensiunea săgeții */
+    font-size: 12px; /* Aumentează dimensiunea săgeții */
     color: yellow;   /* Schimbă culoarea săgeții în galben */
     margin-left: 5px; /* Adaugă un pic de spațiu între textul antetului și săgeată */
   }
@@ -79,11 +66,8 @@ th .w3-input {
     color: yellow;
   }
 
-  .table-top {
-    display: flex;
-    justify-content: space-between; /* Aliniază titlul și butonul la extremități */
-    align-items: center; /* Centrează vertical elementele */
-    //padding-right: 14px;
+.table-filter-fields, .table-filter-fields input, tbody {
+  color: var(--main-blue0);
 }
 
 .text-left {
@@ -101,24 +85,18 @@ th .w3-input {
     border-top: 2px solid  var(--main-blue0); // Add a solid black border on top
     //color:  var(--main-blue); // Optional: Change background color for distinction
 }
-tbody {
-  color: var(--main-blue0);
-}
-
 
 .table-filter-area {
   display: flex;
-  align-items: center;       /* Aliniere verticală la centru */
-  justify-content: space-between; /* Distribuie spațiul între elemente */
+  align-items: center;
+  justify-content: space-between;
   //gap: 1rem;
   width: 100%;
-
   padding: 8px;
   background-color: #f8f9fa; // Fundal deschis
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Umbră subtilă
 }
-
 
 .table-filter-reset,
 .table-filter-fields,
@@ -157,29 +135,7 @@ tbody {
   background-color:var(--main-blue0);
 }
 
-.filter-field {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-right: 1rem;
-}
 
-.filter-field label {
-  color: #555;
-}
-
-.filter-field input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  color: #333;
-  background-color: #f8f9fa;
-  cursor: pointer;
-}
-
-.filter-field input:focus {
-  border-color: #007bff;
-  outline: none;
-}
 
 .fas.fa-times {
   color: white;

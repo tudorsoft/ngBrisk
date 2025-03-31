@@ -35,13 +35,12 @@
         <button class="w3-button w3-round w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
     </div>
 </div>
-<div class="table-container w3-container">
+<div class="table-container">
     <table class="w3-table w3-small w3-striped w3-bordered w3-hoverable">
         <thead>
-            <!-- 
             <tr class="table-header">
                 <th *ngFor="let col of columns; let i = index" 
-                    class="column-title" 
+                    class="" 
                     (click)="sortData(col.name)"
                     [ngStyle]="{'width': getColumnWidth(col)}">
                     <span [ngClass]="{'sorted': sortColumn === col.name}">{{ col.label }}</span>
@@ -51,7 +50,7 @@
                 </th>
               </tr>           
             <tr class="table-search">
-                <th *ngFor="let column of selectedColumns" class="column-search">
+                <th *ngFor="let column of selectedColumns">
                     <input 
                         class="w3-input"
                         type="text" 
@@ -60,32 +59,10 @@
                         placeholder="{{ column }}..." />
                 </th>
             </tr>
-            -->
-            <tr class="table-header">
-                <th *ngFor="let col of columns" 
-                    class="column-title" 
-                    (click)="sortData(col.name)"
-                    [ngStyle]="getCellStyle(col)">
-                  <span [ngClass]="{'sorted': sortColumn === col.name}">{{ col.label }}</span>
-                  <span *ngIf="sortColumn === col.name" class="arrow">
-                    {{ sortDirection === 'asc' ? '▲' : '▼' }}
-                  </span>
-                </th>
-              </tr>
-              <tr class="table-search">
-                <th *ngFor="let col of columns" [ngStyle]="getCellStyle(col)">
-                  <!-- Exemplu: un input pentru filtrare -->
-                  <input *ngIf="col.searchable" type="text" 
-                         placeholder="Search {{ col.label }}" 
-                         (input)="setSearchValue(col.name, $event.target.value)" 
-                         [value]="getSearchValue(col.name)">
-                </th>
-              </tr>
-
+            
         </thead>
 
         <tbody>
-            <!--
             <tr *ngFor="let item of filteredData">
                 <td *ngFor="let colName of selectedColumns"
                     [ngClass]="getAlignmentClass(getColumnDefinition(colName)!)"
@@ -106,45 +83,8 @@
                   </ng-container>
                 </td>
               </tr>
-            -->
-            <tr *ngFor="let item of filteredData">
-                <td *ngFor="let colName of selectedColumns"
-                    [ngClass]="getAlignmentClass(getColumnDefinition(colName)!)"
-                    [ngStyle]="getCellStyle(getColumnDefinition(colName)!)">
-                  <ng-container *ngIf="getColumnDefinition(colName) as colDef">
-                    <ng-container [ngSwitch]="colDef.type">
-                      <!-- Tip 'check': afișează bifă (✓) -->
-                      <ng-container *ngSwitchCase="'check'">
-                        <span *ngIf="isChecked(item, colDef)">✓</span>
-                        <span *ngIf="!isChecked(item, colDef)">&nbsp;</span>
-                      </ng-container>
-                      <!-- Tip 'numeric': afișează valoarea formatată -->
-                      <ng-container *ngSwitchCase="'numeric'">
-                        {{ formatNumber(item[colName], colDef) }}
-                      </ng-container>
-                      <!-- Alte tipuri -->
-                      <ng-container *ngSwitchDefault>
-                        {{ item[colName] }}
-                      </ng-container>
-                    </ng-container>
-                  </ng-container>
-                </td>
-              </tr>
-              <tr *ngIf="showTotals()" class="total-row">
-                <td *ngFor="let colName of selectedColumns">
-                  <ng-container *ngIf="getColumnDefinition(colName) as colDef">
-                    <div [ngClass]="getAlignmentClass(colDef)" [ngStyle]="getCellStyle(colDef)">
-                      <ng-container *ngIf="isNumericColumn(colDef) && canShowTotal(colDef)">
-                        {{ calculateTotal(colName) }}
-                      </ng-container>
-                      <ng-container *ngIf="!isNumericColumn(colDef) || !canShowTotal(colDef)">
-                        &nbsp;
-                      </ng-container>
-                    </div>
-                  </ng-container>
-                </td>
-              </tr>
-            <!--
+            
+            
               <tr *ngIf="showTotals()" class="total-row">
                 <td *ngFor="let colName of selectedColumns"
                     [ngClass]="{'text-right': isNumericColumn(getColumnDefinition(colName)!)}"
@@ -157,7 +97,7 @@
                   </ng-container>
                 </td>
               </tr>
-            -->
+            
         </tbody>
 
     </table>
