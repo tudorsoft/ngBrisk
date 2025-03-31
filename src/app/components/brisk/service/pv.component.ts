@@ -9,16 +9,16 @@ import { ErrorService      } from '../../../services/error.service';
 import { DataTableComponent} from '../../data-table.component';
 import * as DateUtils from '../../../utils/date.utils';
 import { ColumnDefinition } from '../../type-definition';
+import { SectionDefinition } from '../../type-definition';
 
 @Component({
   selector: 'app-pv',
-  //standalone: true,
   imports: [CommonModule, DataTableComponent],
   templateUrl: './pv.component.html',
   styleUrls: ['./pv.component.scss'],
 })
 export class PvComponent implements OnInit {
-  columns: ColumnDefinition[] = [
+  columns : ColumnDefinition[] = [
     //{ label: 'ID', name: 'id', type: 'numeric', width: '70px' },
     { label: 'Data', name: 'data_doc', type: 'date', fixed: "left" },
     { label: 'Numar', name: 'numar', type: 'text', fixed: "left" },
@@ -28,13 +28,17 @@ export class PvComponent implements OnInit {
     { label: 'Facturat', name: 'facturat', type: 'check', align: 'center', width: "50px", fixed: "right"},
     //{ label: 'Valoare', name: 'valoare', type: 'numeric', showTotal: true, decimals: 2 },
   ];
-  // Definim câmpurile de filtrare specifice pentru această componentă
+  
+  // Definim câmpurile de filtrare
   filterFields = [
-    { label: '', type: 'date', name: 'cDataI', 
-      defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() === 0 ? 11 : new Date().getMonth() - 1, 1)) },
-    { label: '', type: 'date', name: 'cDataS', 
-      defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)) },
+    { label: '', type: 'date', name: 'cDataI', defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() === 0 ? 11 : new Date().getMonth() - 1, 1)) },
+    { label: '', type: 'date', name: 'cDataS', defaultValue: DateUtils.formatDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)) },
     //{ label: 'Client', type: 'text', name: 'cClient'},
+  ];
+
+  sections: SectionDefinition[] = [ 
+    { label: 'Antet', name: 'antet'},
+    { label: 'Manopera', name: 'manopera'},
   ];
 
   @Output() dataUpdated = new EventEmitter<any[]>();

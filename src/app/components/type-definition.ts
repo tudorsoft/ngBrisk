@@ -10,3 +10,10 @@ export interface ColumnDefinition {
     align?: string;
     fixed?: string;
   }
+
+  export interface SectionDefinition {
+    label: string;
+    name: string;
+    hasTable?: string;
+    required?: number;
+  }
