@@ -8,16 +8,7 @@ import { StorageService    } from '../../../services/storage.service';
 import { ErrorService      } from '../../../services/error.service';
 import { DataTableComponent} from '../../data-table.component';
 import * as DateUtils from '../../../utils/date.utils';
-
-interface ColumnDefinition {
-  label: string;
-  name: string;
-  type: string;
-  showTotal?: boolean;
-  decimals?: number;
-  width?: string;
-  align?: string;
-}
+import { ColumnDefinition } from '../../type-definition';
 
 @Component({
   selector: 'app-pv',

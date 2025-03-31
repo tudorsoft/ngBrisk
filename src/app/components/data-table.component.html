@@ -42,13 +42,13 @@
                 <th *ngFor="let col of columns; let i = index" 
                     class="column-title" 
                     (click)="sortData(col.name)"
-                    [ngStyle]="{'width': getColumnWidth(col.name)}"> <!-- Call the helper method here -->
+                    [ngStyle]="{'width': getColumnWidth(col)}"> <!-- Se transmite obiectul complet -->
                     <span [ngClass]="{'sorted': sortColumn === col.name}">{{ col.label }}</span>
                     <span *ngIf="sortColumn === col.name" class="arrow">
                         {{ sortDirection === 'asc' ? '▲' : '▼' }}
                     </span>
                 </th>
-            </tr>            
+              </tr>           
             <tr class="table-search">
                 <th *ngFor="let column of selectedColumns" class="column-search">
                     <input 
@@ -62,7 +62,8 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of filteredData">
+            <!-- varianta veche -->
+            <!-- <tr *ngFor="let item of filteredData">
                 <td *ngFor="let column of selectedColumns" 
                     [ngClass]="{'text-right': isNumericColumn(column)}"
                     [ngStyle]="{'width': getColumnWidth(column)}">
@@ -73,20 +74,46 @@
                         {{ item[column] }}
                     </ng-container>
                 </td>
-            </tr>
+            </tr> -->
 
-            <tr *ngIf="showTotals()" [ngClass]="'total-row'">
-                <td *ngFor="let column of selectedColumns" 
-                    [ngClass]="{'text-right': isNumericColumn(column)}"
-                    [ngStyle]="{'width': getColumnWidth(column)}"> <!-- Call the helper method here -->
-                    <ng-container *ngIf="isNumericColumn(column) && canShowTotal(column)">
-                        {{ calculateTotal(column) }} <!-- Show total if column allows -->
+            <!-- varianta noua -->
+            <tr *ngFor="let item of filteredData">
+                <td *ngFor="let colName of selectedColumns"
+                    [ngClass]="getAlignmentClass(getColumnDefinition(colName)!)"
+                    [ngStyle]="{'width': getColumnWidth(getColumnDefinition(colName)!)}">
+                  <ng-container *ngIf="getColumnDefinition(colName) as colDef">
+                    <ng-container [ngSwitch]="colDef.type">
+                      <!-- Coloane de tip "check" -->
+                      <ng-container *ngSwitchCase="'check'">
+                        <span *ngIf="isChecked(item, colDef)">✓</span>
+                        <span *ngIf="!isChecked(item, colDef)">&nbsp;</span>
+                      </ng-container>
+                      <!-- Coloane de tip "numeric" -->
+                      <ng-container *ngSwitchCase="'numeric'">
+                        {{ formatNumber(item[colName], colDef) }}
+                      </ng-container>
+                      <!-- Alte tipuri -->
+                      <ng-container *ngSwitchDefault>
+                        {{ item[colName] }}
+                      </ng-container>
                     </ng-container>
-                    <ng-container *ngIf="!isNumericColumn(column) || !canShowTotal(column)">
-                        {{ '' }} <!-- Empty cell if no total should be shown -->
-                    </ng-container>
+                  </ng-container>
                 </td>
-            </tr>
+              </tr>
+
+
+              <tr *ngIf="showTotals()" class="total-row">
+                <td *ngFor="let colName of selectedColumns"
+                    [ngClass]="{'text-right': isNumericColumn(getColumnDefinition(colName)!)}"
+                    [ngStyle]="{'width': getColumnWidth(getColumnDefinition(colName)!)}">
+                  <ng-container *ngIf="isNumericColumn(getColumnDefinition(colName)!) && canShowTotal(getColumnDefinition(colName)!)">
+                    {{ calculateTotal(colName) }}
+                  </ng-container>
+                  <ng-container *ngIf="!isNumericColumn(getColumnDefinition(colName)!) || !canShowTotal(getColumnDefinition(colName)!)">
+                    {{ '' }}
+                  </ng-container>
+                </td>
+              </tr>
         </tbody>
 
     </table>

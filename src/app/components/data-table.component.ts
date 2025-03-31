@@ -4,6 +4,7 @@ import { Component, Input, OnInit, AfterViewChecked, Output, EventEmitter, Chang
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
+import { ColumnDefinition } from './type-definition'; 
 
 @Component({
   selector: 'app-data-table',
@@ -23,7 +24,7 @@ export class DataTableComponent implements OnInit {
     get filteredData(): any[] {
       return this._filteredData; // Returnează datele filtrate
     }
-    @Input() columns: { label: string; name: string; type: string; showTotal?: boolean; decimals?: number; width?: string; align?: string;}[] = [];
+    @Input() columns: ColumnDefinition[] = [];
     @Input() columnLabels: string[] = [];
     @Input() recordCount: number = 0;
     @Output() refresh = new EventEmitter<void>();
@@ -165,15 +166,47 @@ export class DataTableComponent implements OnInit {
         this.filterData();
     }
 
-    isNumericColumn(column: string): boolean {
-        const col = this.columns.find(c => c.name === column);
-        return col ? col.type === 'numeric' : false;
-    }
+  // Returnează definiția completă a unei coloane pe baza numelui
+  getColumnDefinition(columnName: string): ColumnDefinition | undefined {
+    return this.columns.find(c => c.name === columnName);
+  }
 
-    formatNumber(value: any, columnName: string): string {
-        const decimals = this.columns.find(c => c.name === columnName)?.decimals || 0;
-        return typeof value === 'number' ? value.toFixed(decimals) : '';
+  // Determină dacă o coloană este numerică
+  isNumericColumn(column: ColumnDefinition): boolean {
+    return column.type === 'numeric';
+  }
+
+  // Determină dacă checkbox-ul trebuie bifat (pentru coloanele de tip "check")
+  isChecked(item: any, column: ColumnDefinition): boolean {
+    const value = item[column.name];
+    return value === 1 || value === '1';
+  }
+
+  // Returnează lățimea definită a coloanei sau 'auto' dacă nu este specificată
+  getColumnWidth(column: ColumnDefinition): string {
+    return column.width ? column.width : 'auto';
+  }
+
+  // Returnează clasa de aliniere în funcție de proprietatea 'align' a coloanei
+  getAlignmentClass(column: ColumnDefinition): string {
+    if (column.align) {
+      if (column.align === 'right') {
+        return 'text-right';
+      } else if (column.align === 'center') {
+        return 'text-center';
+      } else {
+        return 'text-left';
+      }
     }
+    return this.isNumericColumn(column) ? 'text-right' : 'text-left';
+  }
+
+  // Exemplu de formatare a numerelor; poți adapta implementarea după necesități
+  formatNumber(value: any, column: ColumnDefinition): string {
+    if (value == null) return '';
+    let decimals = column.decimals || 0;
+    return Number(value).toFixed(decimals);
+  }
 
     calculateTotal(column: string): string {
         const decimalPlaces = this.columns.find(c => c.name === column)?.decimals || 0;
@@ -188,19 +221,11 @@ export class DataTableComponent implements OnInit {
         return this.filteredData.length > 0;
     }
 
-    canShowTotal(column: string): boolean {
-        const col = this.columns.find(c => c.name === column);
+    canShowTotal(column: ColumnDefinition): boolean {
+        const col = this.columns.find(c => c.name === column.name);
         return col ? col.showTotal === true : false; // Check if the column allows total display
     }
     
-    getColumnWidth(columnName: string): string {
-        const col = this.columns.find(c => c.name === columnName);
-        return col ? col.width || 'auto' : 'auto'; // Return the width or 'auto' as default
-    }
-    getColumnDefinition(columnName: string) {
-        return this.columns.find(col => col.name === columnName);
-      }
-
     onRefresh() {
         const filterForm = this.filterFormSubject.value; // Accesează valoarea curentă a filterForm
         if (!filterForm) {
@@ -248,4 +273,5 @@ export class DataTableComponent implements OnInit {
     this.buildFilterDatabase(); // Construiește filterDatabase
     this.filterDatabaseChange.emit(this.filterDatabase); // Emite filterDatabase către componentele părinte
     }
+
 }

@@ -87,11 +87,15 @@ th .w3-input {
 }
 
 .text-left {
-    text-align: left;
+  text-align: left;
+}
+.text-center {
+  text-align: center;
 }
 .text-right {
-    text-align: right;
+  text-align: right;
 }
+
 .total-row {
     font-weight: bold; // Makes the total row text bold
     border-top: 2px solid  var(--main-blue0); // Add a solid black border on top
