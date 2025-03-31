@@ -23,7 +23,7 @@ export class DataTableComponent implements OnInit {
     get filteredData(): any[] {
       return this._filteredData; // Returnează datele filtrate
     }
-    @Input() columns: { label: string; name: string; type: string; showTotal?: boolean; decimals?: number; width?: string; }[] = [];
+    @Input() columns: { label: string; name: string; type: string; showTotal?: boolean; decimals?: number; width?: string; align?: string;}[] = [];
     @Input() columnLabels: string[] = [];
     @Input() recordCount: number = 0;
     @Output() refresh = new EventEmitter<void>();
@@ -197,6 +197,9 @@ export class DataTableComponent implements OnInit {
         const col = this.columns.find(c => c.name === columnName);
         return col ? col.width || 'auto' : 'auto'; // Return the width or 'auto' as default
     }
+    getColumnDefinition(columnName: string) {
+        return this.columns.find(col => col.name === columnName);
+      }
 
     onRefresh() {
         const filterForm = this.filterFormSubject.value; // Accesează valoarea curentă a filterForm

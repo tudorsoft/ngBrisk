@@ -16,6 +16,7 @@ interface ColumnDefinition {
   showTotal?: boolean;
   decimals?: number;
   width?: string;
+  align?: string;
 }
 
 @Component({
@@ -33,8 +34,9 @@ export class PvComponent implements OnInit {
     { label: 'Client', name: 'den_firma', type: 'text' },
     { label: 'P.Lucru', name: 'den_plfrm', type: 'text' },
     { label: 'Categ.', name: 'den_comcat', type: 'text' },
+    { label: 'Facturat', name: 'facturat', type: 'check', align: 'center', width: "50px"},
     //{ label: 'Denumire Furnizor', name: 'supplierName', type: 'text' },
-    //{ label: 'Valoare', name: 'amount', type: 'numeric', showTotal: true, decimals: 2 },
+    { label: 'Valoare', name: 'valoare', type: 'numeric', showTotal: true, decimals: 2 },
   ];
   // Definim câmpurile de filtrare specifice pentru această componentă
   filterFields = [

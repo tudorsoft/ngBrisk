@@ -65,15 +65,16 @@
             <tr *ngFor="let item of filteredData">
                 <td *ngFor="let column of selectedColumns" 
                     [ngClass]="{'text-right': isNumericColumn(column)}"
-                    [ngStyle]="{'width': getColumnWidth(column)}"> <!-- Call the helper method here -->
+                    [ngStyle]="{'width': getColumnWidth(column)}">
                     <ng-container *ngIf="isNumericColumn(column)">
-                        {{ formatNumber(item[column], column) }} <!-- Format numeric values -->
+                        {{ formatNumber(item[column], column) }} 
                     </ng-container>
                     <ng-container *ngIf="!isNumericColumn(column)">
-                        {{ item[column] }} <!-- Non-numeric display -->
+                        {{ item[column] }}
                     </ng-container>
                 </td>
             </tr>
+
             <tr *ngIf="showTotals()" [ngClass]="'total-row'">
                 <td *ngFor="let column of selectedColumns" 
                     [ngClass]="{'text-right': isNumericColumn(column)}"
