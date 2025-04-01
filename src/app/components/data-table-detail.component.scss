@@ -5,26 +5,82 @@
   }
   
   .detail-data-area {
-    padding: 15px;
+    padding: 0px;
   }
-  
-  .page-frame {
-    // stiluri specifice zonei de detaliu
-  }
-  
-  .tabs {
-    list-style: none;
+
+.detail-top {
     display: flex;
-    border-bottom: 1px solid #ccc;
-    padding: 0;
-    margin: 0;
+    flex-wrap: wrap; 
+    align-items: center;
+    cursor: pointer;
+}
+.detail-top button {
+  font-size: 0.8rem;       
+  padding: 0.3rem 0.6rem;  
+  min-width: 40px;         
+  box-sizing: border-box;  
+  border: none;
+}
+.detail-top button i {
+  color: white;
+}
+.detail-top button:hover {
+  background-color:var(--main-blue2);
+}
+.detail-top button  {
+  background-color:var(--main-blue0);
+}
+
+.page-frame {
+  background-color: #ffffff;       // Fundal curat, alb
+  border: 1px solid #e0e0e0;       // Bordură subtilă
+  border-radius: 6px;              // Colțuri ușor rotunjite
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // Umbra discretă pentru adâncime
+  padding: 8px;                  // Spațiere interioară generoasă
+  color: var(--main-blue0);              // Culoare neutră pentru text
+}
+
+.tabs {
+  list-style: none;
+  display: flex;
+  padding: 0;
+  margin: 0 0 16px;
+
+  li {
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 1px solid var(--main-blue0);
     
-    li {
-      padding: 10px 15px;
-      cursor: pointer;
-      &.active {
-        font-weight: bold;
-        border-bottom: 2px solid #000;
-      }
+    &:hover {
+      color: var(--main-blue2);
+    }
+    
+    &.active {
+      font-weight: bold;
+      color: var(--main-blue0);
+      border: 1px solid var(--main-blue0);
+      border-radius: 4px 4px 0 0;
+      border-bottom: none;
+      position: relative;
+      /* Aplicăm umbrele doar pentru sus, stânga și dreapta */
+      box-shadow: 
+        0 -4px 8px rgba(0, 0, 0, 0.1),  // umbră sus
+        -4px 0 8px rgba(0, 0, 0, 0.1),  // umbră stânga
+        4px 0 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    &.active::after {
+      content: "";
+      position: absolute;
+      bottom: -8px; // poziționează puțin în afara elementului pentru a acoperi efectul blur al umbrei
+      left: -8px;   // extinde pseudo-elementul pentru a acoperi umbrele "scurse" lateral
+      right: -8px;
+      height: 8px;  // înălțimea trebuie să fie suficientă pentru a acoperi umbra
+      background-color: #ffffff; // culoarea de fundal, adapteaz-o dacă e diferită
+      z-index: 2;
+      pointer-events: none; // astfel încât nu interferează cu interacțiunea
     }
   }
+}

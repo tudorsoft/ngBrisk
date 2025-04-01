@@ -5,10 +5,7 @@
 <!-- Filtrele -->
 <div class="table-filter-area w3-container w3-light-grey" *ngIf="filterForm$ | async as filterForm">
     <div class="table-filter-reset w3-left">
-        <button
-          class="w3-button w3-round"
-          (click)="onResetFilters()"
-        ><i class="fas fa-times"></i></button>
+        <button class="w3-button w3-round" (click)="onResetFilters()"><i class="fas fa-times"></i></button>
     </div>    
     <div class="table-filter-fields">
         <!-- <form [formGroup]="filterForm" class="w3-row filter-field"> -->
@@ -32,11 +29,11 @@
         </form>
     </div>
     <div class="table-filter-refresh w3-right">
-        <button class="w3-button w3-round w3-text-white" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
+        <button class="w3-button w3-round" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
     </div>
 </div>
 <div class="table-container">
-    <table class="w3-table w3-small w3-striped w3-bordered w3-hoverable">
+    <table class="w3-table w3-small w3-bordered w3-striped w3-hoverable">
         <thead>
             <tr class="table-header">
                 <th *ngFor="let col of columns; let i = index" 
@@ -63,7 +60,11 @@
         </thead>
 
         <tbody>
-            <tr *ngFor="let item of filteredData" (dblclick)="onRowDblClick(item)">
+            <tr *ngFor="let item of filteredData" 
+                  (click)="onRowClick(item)" 
+                  (dblclick)="onRowDblClick(item)"
+                  [class.selected]="item === selectedRecord"
+            >
                 <td *ngFor="let colName of selectedColumns"
                     [ngClass]="getAlignmentClass(getColumnDefinition(colName)!)"
                     [ngStyle]="{'width': getColumnWidth(getColumnDefinition(colName)!)}">

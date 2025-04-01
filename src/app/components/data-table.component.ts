@@ -43,6 +43,7 @@ export class DataTableComponent implements OnInit {
     originalData: any[] = []; // Copie a datelor originale
     filterValues: any = {}; // Obiect pentru a stoca valorile câmpurilor de filtrare
     filterDatabase: any[] = []; // Obiect pentru a stoca filtrele în format { name, value }
+    selectedRecord: any = null; 
 
     public filterFormSubject  = new BehaviorSubject<FormGroup>(new FormGroup({}));
     filterForm$ = this.filterFormSubject.asObservable();
@@ -274,6 +275,10 @@ export class DataTableComponent implements OnInit {
     this.filterDatabaseChange.emit(this.filterDatabase); // Emite filterDatabase către componentele părinte
     }
 
+    onRowClick(record: any) {
+      this.selectedRecord = record;
+    }
+    
     onRowDblClick(record: any) {
       this.recordDblClick.emit(record);
     }

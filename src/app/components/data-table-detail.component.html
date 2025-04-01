@@ -1,23 +1,25 @@
 <!-- Zona de listă: se afișează când nu e activă starea de detaliu -->
 <div *ngIf="!detailMode">
     <ng-content select="[list]"></ng-content>
-  </div>
-  
-  <!-- Zona de detaliu: afișează header-ul cu butonul "Inapoi" și page frame-ul cu tab-uri -->
-  <div *ngIf="detailMode">
-    <div class="detail-top">
-      <button (click)="backToList()">Inapoi</button>
-    </div>
-    <div class="detail-data-area">
-      <div class="page-frame">
-        <ul class="tabs">
-          <li *ngFor="let section of sections"
-              (click)="selectSection(section)"
-              [class.active]="activeSection === section">
-            {{ section.label }}
-          </li>
-        </ul>
-        <ng-content select="[detail]"></ng-content>
-      </div>
+</div>
+
+<!-- Zona de detaliu: afișează header-ul cu butonul "Inapoi" și page frame-ul cu tab-uri -->
+<div *ngIf="detailMode">
+  <div class="w3-container w3-light-grey w3-padding-small w3-border">
+    <div class="detail-top w3-left">
+      <button class="w3-button w3-round" (click)="backToList()"><i class="fas fa-arrow-left"></i></button>
     </div>
   </div>
+  <div class="detail-data-area w3-container">
+    <div class="page-frame">
+      <ul class="tabs">
+        <li *ngFor="let section of sections"
+            (click)="selectSection(section)"
+            [class.active]="activeSection === section">
+          {{ section.label }}
+        </li>
+      </ul>
+      <ng-content select="[detail]"></ng-content>
+    </div>
+  </div>
+</div>

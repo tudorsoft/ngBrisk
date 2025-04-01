@@ -143,3 +143,8 @@
 .fas.fa-times {
   color: white;
 }
+
+table.w3-table tr.selected {
+  background-color: var(--main-blue0); // poți alege orice culoare potrivită
+  color: white; // poți alege orice culoare potrivită
+}
