@@ -7,13 +7,14 @@ import { FormGroup } from '@angular/forms';
 import { StorageService    } from '../../../services/storage.service';
 import { ErrorService      } from '../../../services/error.service';
 import { DataTableComponent} from '../../data-table.component';
+import { DataTableDetailComponent} from '../../data-table-detail.component';
 import * as DateUtils from '../../../utils/date.utils';
 import { ColumnDefinition } from '../../type-definition';
 import { SectionDefinition } from '../../type-definition';
 
 @Component({
   selector: 'app-pv',
-  imports: [CommonModule, DataTableComponent],
+  imports: [CommonModule, DataTableComponent, DataTableDetailComponent],
   templateUrl: './pv.component.html',
   styleUrls: ['./pv.component.scss'],
 })
@@ -39,6 +40,10 @@ export class PvComponent implements OnInit {
   sections: SectionDefinition[] = [ 
     { label: 'Antet', name: 'antet'},
     { label: 'Manopera', name: 'manopera'},
+    { label: 'Pozitii', name: 'pozitii'},
+    { label: 'Materiale', name: 'materiale'},
+    { label: 'Observatii', name: 'observatii'},
+    { label: 'Fisiere atasate', name: 'atas'},
   ];
 
   @Output() dataUpdated = new EventEmitter<any[]>();

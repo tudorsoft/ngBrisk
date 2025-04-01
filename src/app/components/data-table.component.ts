@@ -35,15 +35,15 @@ export class DataTableComponent implements OnInit {
     @Output() filterChange = new EventEmitter<any>(); // Emitem valorile câmpurilor de filtrare
     @Output() filterDatabaseChange = new EventEmitter<any[]>(); // Emitem filterDatabase către componentele apelatoare
     @Output() formReady = new EventEmitter<FormGroup>();
-  
+
+    @Output() recordDblClick = new EventEmitter<any>();
+
     searchValues: string[] = [];
     selectedColumns: string[] = [];
     originalData: any[] = []; // Copie a datelor originale
     filterValues: any = {}; // Obiect pentru a stoca valorile câmpurilor de filtrare
     filterDatabase: any[] = []; // Obiect pentru a stoca filtrele în format { name, value }
-    //filterForm!: FormGroup; // Marchează filterForm ca fiind asignată ulterior
 
-    //private filterFormSubject = new BehaviorSubject<FormGroup | null>(null);
     public filterFormSubject  = new BehaviorSubject<FormGroup>(new FormGroup({}));
     filterForm$ = this.filterFormSubject.asObservable();
 
@@ -273,4 +273,9 @@ export class DataTableComponent implements OnInit {
     this.buildFilterDatabase(); // Construiește filterDatabase
     this.filterDatabaseChange.emit(this.filterDatabase); // Emite filterDatabase către componentele părinte
     }
+
+    onRowDblClick(record: any) {
+      this.recordDblClick.emit(record);
+    }
+
 }

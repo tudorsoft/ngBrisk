@@ -1,20 +1,44 @@
-<!-- pv.component.html -->
-<div *ngIf="filteredData.length; else noData">
-    <app-data-table 
-      [title]="'PROCESE VERBALE'"
-      [filteredData]="filteredData"
-      [columns]="columns"
-      [columnLabels]="columnLabels"
-      [filterFields]="filterFields"
-      (formReady)="onFormReady($event)" 
-      (filterChange)="onFilterDatabaseChange($event)"
-      (filterDatabaseChange)="onFilterDatabaseChange($event)"
-      (resetFilters)="onResetFilters()"
-      [recordCount]="recordCount"
-    >
-    </app-data-table>
+<app-data-table-detail [sections]="sections" #wrapper>
+  <!-- Zona de listă: se păstrează exact logica existentă -->
+  <div list>
+    <ng-container *ngIf="filteredData.length; else noData">
+      <app-data-table 
+        [title]="'PROCESE VERBALE'"
+        [filteredData]="filteredData"
+        [columns]="columns"
+        [columnLabels]="columnLabels"
+        [filterFields]="filterFields"
+        (formReady)="onFormReady($event)" 
+        (filterChange)="onFilterDatabaseChange($event)"
+        (filterDatabaseChange)="onFilterDatabaseChange($event)"
+        (resetFilters)="onResetFilters()"
+        [recordCount]="recordCount"
+        (recordDblClick)="wrapper.openDetail()"
+      >
+      </app-data-table>
+    </ng-container>
+    <ng-template #noData>
+      <p *ngIf="errorMessage; else noDataMessage">{{ errorMessage }}</p>
+      <ng-template #noDataMessage>
+        Asteptati incarcarea datelor...
+      </ng-template>
+    </ng-template>
   </div>
-  <ng-template #noData>
-    <p *ngIf="errorMessage; else noDataMessage">{{ errorMessage }}</p>
-    <ng-template #noDataMessage>Asteptati incarcarea datelor...</ng-template>
-  </ng-template>
+
+  <!-- Zona de detaliu: se afișează doar după dublu-click, conform secțiunilor definite -->
+  <div detail>
+    <ng-container [ngSwitch]="wrapper.activeSection?.label">
+      <div *ngSwitchCase="'Antet'">
+        <!-- Conținut pentru secțiunea "Antet" -->
+        <p>Detalii Antet...</p>
+      </div>
+      <div *ngSwitchCase="'Manopera'">
+        <!-- Conținut pentru secțiunea "Manopera" -->
+        <p>Detalii Manopera...</p>
+      </div>
+      <div *ngSwitchDefault>
+        <p>Detalii secțiune</p>
+      </div>
+    </ng-container>
+  </div>
+</app-data-table-detail>
