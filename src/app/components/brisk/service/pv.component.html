@@ -1,4 +1,9 @@
-<app-data-table-detail [sections]="sections" #wrapper>
+<app-data-table-detail 
+    [sections]="sections" 
+    [currentRecordDetail]="currentRecordDetail"
+    [fieldValues]="fieldValues" 
+    #wrapper (detailRequested)="onRecordDblClick($event)"
+>
   <!-- Zona de listă: se păstrează exact logica existentă -->
   <div list>
     <ng-container *ngIf="filteredData.length; else noData">
@@ -13,32 +18,34 @@
         (filterDatabaseChange)="onFilterDatabaseChange($event)"
         (resetFilters)="onResetFilters()"
         [recordCount]="recordCount"
-        (recordDblClick)="wrapper.openDetail()"
+        (recordDblClick)="wrapper.openDetail($event)"
       >
       </app-data-table>
     </ng-container>
     <ng-template #noData>
       <p *ngIf="errorMessage; else noDataMessage">{{ errorMessage }}</p>
       <ng-template #noDataMessage>
-        Asteptati incarcarea datelor...
+        Incarcare lista...
       </ng-template>
     </ng-template>
   </div>
 
   <!-- Zona de detaliu: se afișează doar după dublu-click, conform secțiunilor definite -->
+  <!--
   <div detail>
     <ng-container [ngSwitch]="wrapper.activeSection?.label">
       <div *ngSwitchCase="'Antet'">
-        <!-- Conținut pentru secțiunea "Antet" -->
-        <p>Detalii Antet...</p>
+        <p>Descriere: {{ currentRecordDetail?.obs }}</p>
+        <p>JSON:</p>
+        <pre>{{ currentRecordDetail | json }}</pre>
       </div>
       <div *ngSwitchCase="'Manopera'">
-        <!-- Conținut pentru secțiunea "Manopera" -->
         <p>Detalii Manopera...</p>
       </div>
       <div *ngSwitchDefault>
         <p>Detalii secțiune</p>
       </div>
     </ng-container>
-  </div>
+  </div> 
+-->
 </app-data-table-detail>

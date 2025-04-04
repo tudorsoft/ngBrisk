@@ -37,6 +37,7 @@ export class DataTableComponent implements OnInit {
     @Output() formReady = new EventEmitter<FormGroup>();
 
     @Output() recordDblClick = new EventEmitter<any>();
+    
 
     searchValues: string[] = [];
     selectedColumns: string[] = [];
@@ -280,7 +281,9 @@ export class DataTableComponent implements OnInit {
     }
     
     onRowDblClick(record: any) {
+      console.log('Dublu-click pe record:', record);
       this.recordDblClick.emit(record);
+      
     }
 
 }

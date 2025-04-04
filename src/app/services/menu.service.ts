@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
+import { environment } from '../../environments/environment';
 
 export interface MenuItem {
   label: string;
@@ -29,7 +30,8 @@ export class MenuService {
     if (!apiUrl) {
       throw new Error('URL-ul API-ului nu este setat.');
     }
-    apiUrl = apiUrl + '/wngMenu';
+
+    /*apiUrl = apiUrl + '/wngMenu';
     return this.http.get<MenuItem[]>(apiUrl).pipe(
       tap({
         next: (menuItems) => {
@@ -39,6 +41,23 @@ export class MenuService {
           console.warn('Error fetching menu items:', err);
         }
       })
-    );
+    ); */
+    
+    apiUrl = apiUrl + '/wngMenu';
+    const fullUrl = environment.useProxy
+      ? 'web-proxy.php?api=' + encodeURIComponent(apiUrl)
+      : apiUrl;
+    return this.http.get<MenuItem[]>(fullUrl).pipe(
+      tap({
+        next: (menuItems) => {
+          // console.log('MenuService items received from API:', menuItems);
+        },
+        error: (err) => {
+          console.warn('Error fetching menu items:', err);
+        }
+      })
+    ); //.subscribe();
+
+
   }
 }

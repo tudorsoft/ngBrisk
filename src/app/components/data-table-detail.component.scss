@@ -38,6 +38,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // Umbra discretă pentru adâncime
   padding: 8px;                  // Spațiere interioară generoasă
   color: var(--main-blue0);              // Culoare neutră pentru text
+  height: calc(100vh - 112px); /* Ajustează 150px cu suma înălțimilor altor elemente (de ex. header, margini, etc.) */
+  overflow-y: auto;
 }
 
 .tabs {
@@ -83,4 +85,73 @@
       pointer-events: none; // astfel încât nu interferează cu interacțiunea
     }
   }
+}
+
+
+
+// Campuri detaliu
+
+.detail-fields {
+  display: grid;
+  grid-template-columns: auto 1fr;  /* Prima coloană se ajustează la conținut */
+  row-gap: 16px;
+  column-gap: 12px;
+  align-items: center;
+}
+.detail-fields .detail-field {
+  display: contents;  /* Permite ca elementele din interior să fie plasate direct în grid-ul părinte */
+}
+
+.detail-fields label {
+  font-size: 14px;
+  color: #333;
+  font-weight: lighter;
+  white-space: nowrap; /* Previne ruperea textului */
+}
+
+.input-wrapper {
+  width: 100%;
+}
+
+
+
+/* Input-urile și select-urile se vor extinde pe restul lățimii */
+.detail-field input[type="text"],
+.detail-field input[type="date"],
+.detail-field input[type="number"],
+.detail-field select {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #495057;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input-urile și select-urile în mod read-only sau disabled */
+.detail-field input[readonly],
+.detail-field select[disabled] {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* Efect de focus pentru input-uri și select-uri */
+.detail-field input:focus,
+.detail-field select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* Dacă folosești span ca fallback, asigură-te că e și el aliniat */
+.detail-field span {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #495057;
 }

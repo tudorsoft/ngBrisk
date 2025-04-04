@@ -48,17 +48,17 @@
 }
 
 .table-search .w3-input {
-    width: 100%; /* Asigură că input-ul se întinde pe întreaga lățime */
-    box-sizing: border-box; /* Împiedică depășirea marginilor */
+    width: 100%; 
+    box-sizing: border-box; 
     background-color: var(--main-white0);
     padding: 6px 2px 6px 2px;
 }
   
   thead th .arrow {
     font-weight:bolder;
-    font-size: 12px; /* Aumentează dimensiunea săgeții */
-    color: yellow;   /* Schimbă culoarea săgeții în galben */
-    margin-left: 5px; /* Adaugă un pic de spațiu între textul antetului și săgeată */
+    font-size: 12px;
+    color: yellow; 
+    margin-left: 5px;
   }
 
   thead th .sorted {

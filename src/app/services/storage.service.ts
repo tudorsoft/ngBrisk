@@ -44,6 +44,7 @@ export class StorageService {
   }
 
   async testIPs(): Promise<string> {
+    /*
     const ipLocal = environment.cDatabaseUrlLocal;
     const ipExternal = environment.cDatabaseUrlExternal;
     const timeout = 5000; // 5 secunde
@@ -51,6 +52,25 @@ export class StorageService {
     const testIp = (url: string): Promise<string | null> => {
       return this.http
         .get(url + '/wngLogin')
+        .pipe(
+          catchError(() => of(null))
+        )
+        .toPromise()
+        .then(() => url)
+        .catch(() => null);
+    };
+    */
+    const ipLocal = environment.cDatabaseUrlLocal;
+    const ipExternal = environment.cDatabaseUrlExternal;
+    const timeout = 5000; // 5 secunde
+    
+    const testIp = (url: string): Promise<string | null> => {
+      let testUrl = url + '/wngLogin';
+      if (environment.useProxy) {
+        testUrl = 'web-proxy.php?api=' + encodeURIComponent(testUrl);
+      }
+      return this.http
+        .get(testUrl)
         .pipe(
           catchError(() => of(null))
         )

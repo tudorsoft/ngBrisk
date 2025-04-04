@@ -1,4 +1,4 @@
-<!-- Zona de listă: se afișează când nu e activă starea de detaliu -->
+<!-- data-table-detail.component.html -->
 <div *ngIf="!detailMode">
     <ng-content select="[list]"></ng-content>
 </div>
@@ -8,10 +8,14 @@
   <div class="w3-container w3-light-grey w3-padding-small w3-border">
     <div class="detail-top w3-left">
       <button class="w3-button w3-round" (click)="backToList()"><i class="fas fa-arrow-left"></i></button>
+      <span style="margin-left: 8px;">Detalii id={{ currentRecord?.id }}</span>
     </div>
   </div>
+
+  <!-- Zona de detaliu cu tab-uri și câmpuri dinamice -->
   <div class="detail-data-area w3-container">
     <div class="page-frame">
+      <!-- Tab-urile secțiunilor -->
       <ul class="tabs">
         <li *ngFor="let section of sections"
             (click)="selectSection(section)"
@@ -19,7 +23,48 @@
           {{ section.label }}
         </li>
       </ul>
-      <ng-content select="[detail]"></ng-content>
-    </div>
+
+      <!-- Afișează câmpurile secțiunii active, dacă există -->
+      <!-- <div *ngIf="currentRecordDetail && currentRecordDetail.length > 0; else loading">  -->
+      <div *ngIf="fieldValues && fieldValues['id']; else loading"> 
+        <div *ngIf="(activeSection?.fields || []).length > 0; else noFields">
+          <div class="detail-fields">
+              <div class="detail-field" *ngFor="let field of activeSection?.fields || []" class="detail-field">
+                <label>{{ field.label }}</label>
+                <div class="input-wrapper">
+                  <ng-container [ngSwitch]="field.type">
+                    <!-- Pentru câmpurile text -->
+                    <input *ngSwitchCase="'text'" type="text"
+                          [value]="fieldValues[field.name] || ''"
+                          readonly />
+                    <!-- Pentru câmpurile de tip dată -->
+                    <input *ngSwitchCase="'date'" type="date"
+                          [value]="fieldValues[field.name] || ''"
+                          readonly />
+                    <!-- Pentru câmpurile numerice -->
+                    <input *ngSwitchCase="'numeric'" type="number"
+                          [value]="fieldValues[field.name] || ''"
+                          readonly />
+                    <!-- Pentru câmpurile de tip combo -->
+                    <select *ngSwitchCase="'combo'" [value]="fieldValues[field.name] || ''" disabled>
+                      <option *ngFor="let option of field.values" [value]="option">{{ option }}</option>
+                    </select>
+                    <!-- Caz default -->
+                    <span *ngSwitchDefault>{{ fieldValues[field.name] || '' }}</span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+        </div>
+
+      </div>
+      <ng-template #loading>
+        <p>Se incarca...</p>
+      </ng-template>
+      <ng-template #noFields>
+        <p>Nu există câmpuri de afișat pentru această secțiune.</p>
+      </ng-template>
+   </div>
   </div>
+
 </div>

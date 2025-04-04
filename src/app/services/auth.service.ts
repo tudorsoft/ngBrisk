@@ -6,7 +6,9 @@ import { Injectable } from '@angular/core';
 import { Router            } from '@angular/router';
 import { BehaviorSubject   } from 'rxjs';
 import { StorageService    } from './storage.service';
+import { HttpProxyService  } from './http-proxy.service';
 import { NavigationService } from './navigation.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +22,7 @@ export class AuthService {
     //true = nu mai cere login
        
     constructor(
+        private httpProxyService: HttpProxyService,
         private navigationService: NavigationService,
         public storageService: StorageService, 
         private http: HttpClient, 
@@ -37,10 +40,38 @@ export class AuthService {
       let apiUrl = this.storageService.cDatabaseUrl.endsWith('/') ? 
                    this.storageService.cDatabaseUrl.slice(0, -1) : 
                    this.storageService.cDatabaseUrl;
-      //console.log('apiUrl=',apiUrl)
       if (apiUrl !== '') {
-        const fullUrl = apiUrl + '/wngLogin';
+        const loginUrl = apiUrl + '/wngLogin';
+        const fullUrl = environment.useProxy
+          ? 'web-proxy.php?api=' + encodeURIComponent(loginUrl)
+          : loginUrl;
+        const body = { username, password }; // Obiectul JSON
+        
         this.http.post<any>(
+          fullUrl,
+          body,
+          { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        ).subscribe(
+          response => {
+            if (response.success) {
+              localStorage.setItem('logged_user', response.username);
+              localStorage.setItem('logged_name', response.name);
+              localStorage.setItem('logged_email', response.email);
+              localStorage.setItem('logged_token', response.token);
+              this.loggedIn.next(true);
+              this.navigationService.reloadCurrentRoute();
+            } else {
+              alert(response.message);
+            }
+          },
+          error => {
+            console.error('Error during login:', error);
+            alert('An error occurred. Please try again.');
+          }
+        );
+
+        /*const fullUrl = apiUrl + '/wngLogin';
+          this.http.post<any>(
             fullUrl, 
             { username, password },
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
@@ -61,7 +92,7 @@ export class AuthService {
         }, error => {
           console.error('Error during login:', error);
           alert('An error occurred. Please try again.');
-        });
+        });*/
       }
 
     }
