@@ -114,61 +114,34 @@ ngOnChanges(changes: SimpleChanges) {
       if (baseUrl.endsWith('/')) {
         baseUrl = baseUrl.slice(0, -1);
       }
-      //const apiEndpoint = `${baseUrl}/wngSQL`;
-
-      //const fullUrl = environment.useProxy
-      //  ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
-      //  : apiEndpoint;
-        
       const body: { [key: string]: any } = {};
-      body['autocomplete'] = true;
-      body['sql'] = getSqlString(field.sql || '', inputValue) || '';
+            body['autocomplete'] = true;
+            body['sql'] = getSqlString(field.sql || '', inputValue) || '';
       
       let request$: Observable<any[]>;
-///////////////////
-
-request$ = this.httpProxyService.post<any[]>(
-  `${baseUrl}/wngSQL`,
-  body,
-  undefined,
-  new HttpHeaders({ 'Content-Type': 'application/json' })
-);
-      
-      /*if (environment.useProxy) {
-        request$ = this.httpProxyService.post<any[]>(
-          apiEndpoint,
-          body,
-          undefined,
-          new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
-        );
-      } else {
-        request$ = this.http.post<any[]>(
-          fullUrl,
-          body,
-          { headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }) }
-        );
-      }*/
-/////////////////
-
-      request$.pipe(
-        tap({
-          next: (options: string[]) => {
-            console.log(options);
-            this.autocompleteOptions[field.name] = options;
-            this.cd.detectChanges();
-          },
-          error: (err: any) => {
-            console.error('Autocomplete error:', err);
-            this.autocompleteOptions[field.name] = [];
-          }
-        })
-      ).subscribe();
-      
+      ///////////////////
+      this.httpProxyService.post<any[]>(
+              `${baseUrl}/wngSQL`,
+              body,
+              undefined,
+              new HttpHeaders({ 'Content-Type': 'application/json' })
+            ).pipe(
+                tap({
+                  next: (options: string[]) => {
+                    console.log(options);
+                    this.autocompleteOptions[field.name] = options;
+                    this.cd.detectChanges();
+                  },
+                  error: (err: any) => {
+                    console.error('Autocomplete error:', err);
+                    this.autocompleteOptions[field.name] = [];
+                  }
+                })
+              ).subscribe();
     } else {
       this.autocompleteOptions[field.name] = [];
     }
   }
-  
 
   selectAutocompleteOption(field: FieldDefinition, option: string) {
     this.fieldValues[field.name] = option;
