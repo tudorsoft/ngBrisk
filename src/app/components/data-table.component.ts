@@ -307,7 +307,7 @@ export class DataTableComponent implements OnInit {
     }
     
     onRowDblClick(record: any) {
-      console.log('Dublu-click pe record:', record);
+      //console.log('Dublu-click pe record:', record);
       this.recordDblClick.emit(record);
       
     }

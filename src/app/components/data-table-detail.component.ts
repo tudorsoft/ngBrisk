@@ -114,25 +114,24 @@ ngOnChanges(changes: SimpleChanges) {
       if (baseUrl.endsWith('/')) {
         baseUrl = baseUrl.slice(0, -1);
       }
-      const apiEndpoint = `${baseUrl}/wngSQL`;
-      const fullUrl = environment.useProxy
-        ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
-        : apiEndpoint;
+      //const apiEndpoint = `${baseUrl}/wngSQL`;
+
+      //const fullUrl = environment.useProxy
+      //  ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
+      //  : apiEndpoint;
         
       const body: { [key: string]: any } = {};
-      body['sql'] = getSqlString(field.sql || '', inputValue) || '';
       body['autocomplete'] = true;
-
-      
+      body['sql'] = getSqlString(field.sql || '', inputValue) || '';
       
       let request$: Observable<any[]>;
 ///////////////////
 
 request$ = this.httpProxyService.post<any[]>(
-  apiEndpoint,
+  `${baseUrl}/wngSQL`,
   body,
   undefined,
-  new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+  new HttpHeaders({ 'Content-Type': 'application/json' })
 );
       
       /*if (environment.useProxy) {

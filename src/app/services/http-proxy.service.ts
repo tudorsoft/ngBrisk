@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class HttpProxyService {
 
-  private proxyUrl = 'web-proxy.php'; // asigură-te că acest fișier se află la același nivel cu index.html
+  private proxyUrl = '/web-proxy.php'; // asigură-te că acest fișier se află la același nivel cu index.html
 
   constructor(private http: HttpClient) {}
 
