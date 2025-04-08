@@ -65,26 +65,41 @@
                   (dblclick)="onRowDblClick(item)"
                   [class.selected]="item === selectedRecord"
             >
+
                 <td *ngFor="let colName of selectedColumns"
                     [ngClass]="getAlignmentClass(getColumnDefinition(colName)!)"
                     [ngStyle]="{'width': getColumnWidth(getColumnDefinition(colName)!)}">
-                  <ng-container *ngIf="getColumnDefinition(colName) as colDef">
-                    <ng-container [ngSwitch]="colDef.type">
-                      <ng-container *ngSwitchCase="'check'">
-                        <span *ngIf="isChecked(item, colDef)">✓</span>
-                        <span *ngIf="!isChecked(item, colDef)">&nbsp;</span>
-                      </ng-container>
-                      <ng-container *ngSwitchCase="'numeric'">
-                        {{ formatNumber(item[colName], colDef) }}
-                      </ng-container>
-                      <ng-container *ngSwitchDefault>
-                        {{ item[colName] }}
-                      </ng-container>
+
+                  <ng-container *ngIf="hasColorMapping(colName) || hasPictureMapping(colName); else defaultContent">
+                    <ng-container *ngIf="hasColorMapping(colName)">
+                        <span [ngStyle]="{'background-color': getColumnColor(colName, item[colName])}"
+                        class="w3-button w3-round w3-padding-small" style="width:100%;">
+                          &nbsp;
+                      </span>
+                    </ng-container>
+                    <ng-container *ngIf="hasPictureMapping(colName)">
+                      <img [src]="getColumnPicture(colName, item[colName])">
                     </ng-container>
                   </ng-container>
+                  
+                  <ng-template #defaultContent>
+                    <ng-container *ngIf="getColumnDefinition(colName) as colDef">
+                      <ng-container [ngSwitch]="colDef.type">
+                        <ng-container *ngSwitchCase="'check'">
+                          <span *ngIf="isChecked(item, colDef)">✓</span>
+                          <span *ngIf="!isChecked(item, colDef)">&nbsp;</span>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'numeric'">
+                          {{ formatNumber(item[colName], colDef) }}
+                        </ng-container>
+                        <ng-container *ngSwitchDefault>
+                          {{ item[colName] }}
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-template>
                 </td>
               </tr>
-            
             
               <tr *ngIf="showTotals()" class="total-row">
                 <td *ngFor="let colName of selectedColumns"

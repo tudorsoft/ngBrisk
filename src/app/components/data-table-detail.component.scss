@@ -1,3 +1,4 @@
+//data-table-detail.component.scss
 .detail-top {
     padding: 10px;
     background-color: #f1f1f1;
@@ -5,7 +6,7 @@
   }
   
   .detail-data-area {
-    padding: 0px;
+    padding: 0px; 
   }
 
 .detail-top {
@@ -25,10 +26,10 @@
   color: white;
 }
 .detail-top button:hover {
-  background-color:var(--main-blue2);
+  background-color: var(--main-blue2);
 }
 .detail-top button  {
-  background-color:var(--main-blue0);
+  background-color: var(--main-blue0);
 }
 
 .page-frame {
@@ -36,7 +37,9 @@
   border: 1px solid #e0e0e0;       // Bordură subtilă
   border-radius: 6px;              // Colțuri ușor rotunjite
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // Umbra discretă pentru adâncime
-  padding: 8px;                  // Spațiere interioară generoasă
+  //padding: 8px;                  // Spațiere interioară generoasă
+  padding: 8px; 
+  margin-bottom: 40px;
   color: var(--main-blue0);              // Culoare neutră pentru text
   height: calc(100vh - 112px); /* Ajustează 150px cu suma înălțimilor altor elemente (de ex. header, margini, etc.) */
   overflow-y: auto;
@@ -89,69 +92,77 @@
 
 
 
-// Campuri detaliu
-
-.detail-fields {
-  display: grid;
-  grid-template-columns: auto 1fr;  /* Prima coloană se ajustează la conținut */
-  row-gap: 16px;
-  column-gap: 12px;
-  align-items: center;
-}
-.detail-fields .detail-field {
-  display: contents;  /* Permite ca elementele din interior să fie plasate direct în grid-ul părinte */
+/* Containerul general pentru toate grupurile */
+.fields-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.detail-fields label {
-  font-size: 14px;
-  color: #333;
-  font-weight: lighter;
-  white-space: nowrap; /* Previne ruperea textului */
-}
-
-.input-wrapper {
+/* Container pentru fiecare grup de câmpuri (de exemplu, "sosire" sau "plecare") */
+.group-container {
+  display: table;
   width: 100%;
+  table-layout: auto;
 }
 
+/* Stil pentru etichete */
+.labels-row label {
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--main-blue0);
+  font-weight: lighter;
+  display: inline-block;
+}
 
-
-/* Input-urile și select-urile se vor extinde pe restul lățimii */
-.detail-field input[type="text"],
-.detail-field input[type="date"],
-.detail-field input[type="number"],
-.detail-field select {
-  flex: 1;
+/* Stil pentru inputuri (poți păstra stilurile existente pentru inputuri) */
+.inputs-row input[type="text"],
+.inputs-row textarea,
+.inputs-row input[type="date"],
+.inputs-row input[type="number"],
+.inputs-row select {
+  width: 100%;
   padding: 8px 12px;
   font-size: 14px;
   border: 1px solid #ced4da;
   border-radius: 4px;
   background-color: #fff;
-  color: #495057;
+  color: var(--main-blue0);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Input-urile și select-urile în mod read-only sau disabled */
-.detail-field input[readonly],
-.detail-field select[disabled] {
-  background-color: #e9ecef;
-  cursor: not-allowed;
+.inputs-row textarea {
+  line-height: 1.5em;
+  height: auto;
+  overflow-y: auto;
+  max-height: 7.5em;
+  padding: 8px 12px;  /* trebuie să fie identic cu cel folosit pentru input-uri */
+  text-indent: 0;
+  color: var(--main-blue0);
 }
 
-/* Efect de focus pentru input-uri și select-uri */
-.detail-field input:focus,
-.detail-field select:focus {
-  border-color: #007bff;
+.inputs-row input:focus, .inputs-row textarea:focus {
+  border-color: var(--main-blue0);
+  outline: none; 
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  outline: none;
 }
 
-/* Dacă folosești span ca fallback, asigură-te că e și el aliniat */
-.detail-field span {
-  flex: 1;
-  padding: 8px 12px;
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+
+.fields-container table.w3-table {
+  margin-top: 16px;
   font-size: 14px;
-  color: #495057;
+}
+
+.fields-container table.w3-table th,
+.fields-container table.w3-table td {
+  padding: 8px 12px;
+}
+
+.fields-container table.w3-table th {
+  background-color: #f1f1f1;
+  font-weight: bold;
+}
+
+.fields-container table.w3-table tr:nth-child(even) {
+  background-color: #f9f9f9;
 }

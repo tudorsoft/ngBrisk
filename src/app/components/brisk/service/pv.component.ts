@@ -1,10 +1,11 @@
 //pv.component.ts:
 //----------------------
-import { HttpClient        } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, ChangeDetectorRef, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule      } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { tap } from 'rxjs/operators'; 
+import { Observable } from 'rxjs';
 
 import { StorageService, HttpProxyService, ErrorService, ColumnDefinition, SectionDefinition, DataTableComponent, DataTableDetailComponent, environment } from '../../../components';
 import * as DateUtils from '../../../utils/date.utils';
@@ -16,9 +17,24 @@ import * as DateUtils from '../../../utils/date.utils';
   styleUrls: ['./pv.component.scss'],
 })
 export class PvComponent implements OnInit {
+
+//Coloane ecran lista:
+//-------------------
   columns : ColumnDefinition[] = [
     //{ label: 'ID', name: 'id', type: 'numeric', width: '70px' },
-    { label: 'Data', name: 'data_doc', type: 'date', fixed: "left" },
+    { label: 'Data', name: 'data_doc', type: 'date', fixed: "left", width: '100px' },
+    { label: 'S', name: 'semnat', type: 'check', width: '32px', align: 'center',
+      colorMapping: (value: any) => {
+        if (value === 0) { return 'red'; } else 
+        if (value === 1) { return 'lightgreen'; } else 
+        if (value === 2) { return '#485F99'; } else { return 'transparent'; }
+      }
+    },
+    { label: 'A', name: 'nrfis', type: 'check', width: '32px', align: 'center',
+      pictureMapping: (value: any) => {
+        if (value === 1) return '/assets/attachment.png'; else return '';
+      }
+    },
     { label: 'Numar', name: 'numar', type: 'text', fixed: "left" },
     { label: 'Client', name: 'den_firma', type: 'text' },
     { label: 'P.Lucru', name: 'den_plfrm', type: 'text' },
@@ -34,30 +50,32 @@ export class PvComponent implements OnInit {
     //{ label: 'Client', type: 'text', name: 'cClient'},
   ];
 
+//Sectiuni si campuri ecran detaliu:
+//---------------------------------
   sections: SectionDefinition[] = [ 
     { label: 'Antet', name: 'antet', 
       fields: [
-        { label: 'Data', name: 'data_doc', type: 'date' },
-        { label: 'Numar', name: 'numar', type: 'text' },
-        { label: 'Categ.', name: 'den_comcat', type: 'text' },
-        { label: 'Client', name: 'den_firma', type: 'text' },
-        { label: 'P.Lucru', name: 'den_plfrm', type: 'text' },
-        { label: 'Subiect', name: 'asobssubiect', type: 'text' },
-        { label: 'Descriere', name: 'obs', type: 'text' },
-        { label: 'Persoana', name: 'aspersclient', type: 'text' },
-       
+        { label: 'Data', name: 'data_doc', type: 'date', group: '1' },
+        { label: 'Numar', name: 'numar', type: 'text', group: '2' },
+        { label: 'Categ.', name: 'den_comcat', type: 'text', group: '3' },
+        { label: 'Client', name: 'den_firma', type: 'autocomplete', group: '4', sql: 'facturi.firme', autocomplete: true },
+        { label: 'P.Lucru', name: 'den_plfrm', type: 'text', group: '5' },
+        { label: 'Subiect', name: 'asobssubiect', type: 'text', group: '6' },
+        { label: 'Descriere', name: 'obs', type: 'textarea', group: '7' },
+        { label: 'Persoana', name: 'aspersclient', type: 'text', group: '8' },
+        { label: 'Facturat', name: 'facturat', type: 'check', align: 'left', group: '9' },
       ]
     },
-    { label: 'Manopera', name: 'manopera',
+    { label: 'Manopera', name: 'manopera', displayAsTable: true,
       fields: [
         { label: 'Persoana', name: 'persoana', type: 'text' },
-        { label: 'Tip Manopera', name: 'tip_manopera', type: 'combo' },
-        { label: 'Data', name: 'sosire_data', type: 'date' },
-        { label: 'Ora', name: 'sosire_ora', type: 'numeric' },
-        { label: 'Minut', name: 'sosire_minut', type: 'combo', values: ['00','05','10','15','20','25','30','35','40','45','50','55'] },
-        { label: 'Data', name: 'plecare_data', type: 'date' },
-        { label: 'Ora', name: 'plecare_ora', type: 'numeric' },
-        { label: 'Minut', name: 'plecare_minut', type: 'combo', values: ['00','05','10','15','20','25','30','35','40','45','50','55'] },
+        { label: 'Tip', name: 'cod_manop', type: 'combo' },
+        { label: 'Sosire', name: 'sosire_data', type: 'date', group: 'sosire' },
+        { label: 'ora', name: 'sosire_ora', type: 'numeric', group: 'sosire' },
+        { label: 'min.', name: 'sosire_minut', type: 'combo', values: ['00','05','10','15','20','25','30','35','40','45','50','55'], group: 'sosire' },
+        { label: 'Plecare', name: 'plecare_data', type: 'date', group: 'plecare' },
+        { label: 'ora', name: 'plecare_ora', type: 'numeric', group: 'plecare' },
+        { label: 'min.', name: 'plecare_minut', type: 'combo', values: ['00','05','10','15','20','25','30','35','40','45','50','55'], group: 'plecare' },
         // ...
       ]
     },
@@ -77,6 +95,7 @@ export class PvComponent implements OnInit {
   columnLabels   : string[] = this.columns.map(col => col.label);
   currentRecordDetail: any = null;
   fieldValues: { [key: string]: any } = {};
+  autocompleteOptions: { [fieldName: string]: string[] } = {};
 
   constructor( public storageService: StorageService, 
                private errorService: ErrorService,
@@ -123,74 +142,99 @@ export class PvComponent implements OnInit {
 
 
   fetchData(filterDatabase?: any[]) {
-    const apiUrl = this.storageService.cDatabaseUrl.endsWith('/')
-      ? this.storageService.cDatabaseUrl.slice(0, -1)
-      : this.storageService.cDatabaseUrl;
-    console.log('fetchData a fost apelat');
-  
-    if (apiUrl !== '') {
-      const apiEndpoint = apiUrl + '/wngPv';
-      const fullUrl = environment.useProxy
-        ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
-        : apiEndpoint;
-  
-      const body: { [key: string]: any } = {};
-      if (filterDatabase) {
-        filterDatabase.forEach(filter => {
-          if (filter.value) {
-            body[filter.name] = filter.value;
-          }
-        });
-      }
-      console.log('Body JSON trimis:', body);
-  
-      this.http
-        .post<any[]>(fullUrl, body, {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        })
-        .subscribe({
-          next: response => {
-            this.filteredData = [...response];
-            this.recordCount = this.filteredData.length;
-            this.errorMessage = null;
-            console.log('Datele au fost preluate:', this.filteredData);
-            this.dataUpdated.emit(this.filteredData);
-          },
-          error: error => {
-            console.error('Eroare accesare ' + fullUrl, error);
-            this.errorMessage = this.errorService.getErrorMessage(error);
-            this.filteredData = [];
-            this.recordCount = 0;
-          }
-        });
+    let baseUrl = this.storageService.cDatabaseUrl;
+    if (baseUrl.endsWith('/')) {
+      baseUrl = baseUrl.slice(0, -1);
     }
+    const apiEndpoint = `${baseUrl}/wngPv`;
+    const fullUrl = environment.useProxy
+      ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
+      : apiEndpoint;
+  
+    // Construiește corpul cererii
+    const body: { [key: string]: any } = {};
+    if (filterDatabase) {
+      filterDatabase.forEach(filter => {
+        if (filter.value) {
+          body[filter.name] = filter.value;
+        }
+      });
+    }
+    //console.log('Body JSON trimis:', body);
+    let request$: Observable<any[]>;
+    if (environment.useProxy) {
+      request$ = this.httpProxyService.post<any[]>(
+        apiEndpoint,
+        body,
+        undefined,
+        new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+      );
+    } else {
+      request$ = this.http.post<any[]>(
+        fullUrl,
+        body,
+        { headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }) }
+      );
+    }
+  
+    request$.subscribe({
+      next: response => {
+        this.filteredData = [...response];
+        this.recordCount = this.filteredData.length;
+        this.errorMessage = null;
+        console.log('Datele au fost preluate:', this.filteredData);
+        this.dataUpdated.emit(this.filteredData);
+      },
+      error: error => {
+        console.error('Eroare accesare ' + fullUrl, error);
+        this.errorMessage = this.errorService.getErrorMessage(error);
+        this.filteredData = [];
+        this.recordCount = 0;
+      }
+    });
   }
 
 
 
   fetchDataDetail(recordId: string) {
-    //console.log('fetchDataDetail apelat cu recordId:', recordId);
+    // Resetează valorile curente
     this.fieldValues = {};
     this.currentRecordDetail = null;
     this.cd.detectChanges();
+  
     let baseUrl = this.storageService.cDatabaseUrl;
     if (baseUrl.endsWith('/')) {
       baseUrl = baseUrl.slice(0, -1);
     }
-    const apirUrl = `${baseUrl}/wngPv`; //`${baseUrl}/wngPv/${recordId}`;
-    const fullUrl = environment.useProxy
-      ? 'web-proxy.php?api=' + encodeURIComponent(apirUrl)
-      : apirUrl;
-
+    
+    const apiEndpoint = `${baseUrl}/wngPv`;
     const body = { id: recordId };
-    console.log('Fetching details from:', fullUrl, 'with body:', body);
-    this.http.post<any>(fullUrl, body, {
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .pipe(
+    console.log('Fetching details from:', apiEndpoint, 'with body:', body);
+  
+    let request$: Observable<any>;
+  
+    if (environment.useProxy) {
+      // Folosim httpProxyService care construiește URL-ul proxy intern
+      request$ = this.httpProxyService.post<any>(
+        apiEndpoint, 
+        body, 
+        undefined, 
+        new HttpHeaders({ 'Content-Type': 'application/json' })
+      );
+    } else {
+      // Folosim apelul direct
+      request$ = this.http.post<any>(
+        apiEndpoint, 
+        body, 
+        { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
+      );
+    }
+  
+    request$.pipe(
       tap({
         next: (detailData) => {
-          const record = detailData[0]; //Array.isArray(detailData) ? detailData[0] : detailData;
+          // Presupunem că detailData este un array; extragem primul element
+          const record = Array.isArray(detailData) ? detailData[0] : detailData;
           this.currentRecordDetail = record;
           this.fieldValues = record || {};
           console.log('fieldValues actualizat:', this.fieldValues);
@@ -200,8 +244,7 @@ export class PvComponent implements OnInit {
           console.error('Eroare la preluarea detaliilor:', err);
         }
       })
-    )
-    .subscribe();
+    ).subscribe();
   }
 
 }

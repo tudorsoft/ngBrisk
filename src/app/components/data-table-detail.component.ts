@@ -1,9 +1,16 @@
 //data-table-detail.component.ts:
 //------------------------------
 import { Component, Input, Output, OnInit, AfterViewChecked, EventEmitter, ChangeDetectorRef, SimpleChanges } from '@angular/core';
-import { SectionDefinition } from './type-definition';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { tap } from 'rxjs/operators'; 
+import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SectionDefinition, FieldDefinition } from './type-definition';
+import { StorageService } from '../services/storage.service';
+import { HttpProxyService } from '../services/http-proxy.service';
+import { getSqlString } from '../utils/sql.utils';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-data-table-detail',
@@ -20,7 +27,15 @@ export class DataTableDetailComponent {
   detailMode: boolean = false;
   activeSection: SectionDefinition | null = null;
   currentRecord: any = null;
+  autocompleteOptions: { [fieldName: string]: string[] } = {};
 
+  constructor(
+    private storageService: StorageService,
+    private http: HttpClient,
+    private httpProxyService: HttpProxyService,
+    private cd: ChangeDetectorRef
+  ) { }
+  
 ngOnChanges(changes: SimpleChanges) {
   /*if (changes['currentRecordDetail']) {
     console.log('currentRecordDetail s-a actualizat:', this.currentRecordDetail);
@@ -57,5 +72,114 @@ ngOnChanges(changes: SimpleChanges) {
     return value;
   }
 
+
+  getGroupedFields(section: SectionDefinition): FieldDefinition[][] {
+    if (!section.fields || section.fields.length === 0) {
+      return [];
+    }
+    const groups: { [key: string]: FieldDefinition[] } = {};
+    section.fields.forEach(field => {
+      const grp = field.group || 'default';
+      if (!groups[grp]) {
+        groups[grp] = [];
+      }
+      groups[grp].push(field);
+      //console.log('getGroupedFields: ',field.name+' '+field.type+' '+field.sql);
+    });
+    // Convertim obiectul în array. Dacă dorești o ordine specifică, poți sorta array-ul după cheie.
+    return Object.keys(groups).map(key => groups[key]);
+  }
+
+
+
+
+  getTableRows(section: SectionDefinition): any[] {
+    // Presupunem că pentru secțiunea tabelară, currentRecordDetail are proprietatea cu numele secțiunii
+    if (this.currentRecordDetail && this.currentRecordDetail[section.name]) {
+      return this.currentRecordDetail[section.name];
+    }
+    return [];
+  }
+
+  ngAfterViewInit() {
+    // codul tău pentru măsurare, etc.
+  }
+
+  onAutocompleteInput(field: FieldDefinition, event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const inputValue = inputElement.value;
+    
+    if (inputValue && inputValue.length >= 2) {
+      let baseUrl = this.storageService.cDatabaseUrl;
+      if (baseUrl.endsWith('/')) {
+        baseUrl = baseUrl.slice(0, -1);
+      }
+      const apiEndpoint = `${baseUrl}/wngSQL`;
+      const fullUrl = environment.useProxy
+        ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
+        : apiEndpoint;
+        
+      const body: { [key: string]: any } = {};
+      body['sql'] = getSqlString(field.sql || '', inputValue) || '';
+      body['autocomplete'] = true;
+
+      
+      
+      let request$: Observable<any[]>;
+///////////////////
+
+request$ = this.httpProxyService.post<any[]>(
+  apiEndpoint,
+  body,
+  undefined,
+  new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+);
+      
+      /*if (environment.useProxy) {
+        request$ = this.httpProxyService.post<any[]>(
+          apiEndpoint,
+          body,
+          undefined,
+          new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+        );
+      } else {
+        request$ = this.http.post<any[]>(
+          fullUrl,
+          body,
+          { headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }) }
+        );
+      }*/
+/////////////////
+
+      request$.pipe(
+        tap({
+          next: (options: string[]) => {
+            console.log(options);
+            this.autocompleteOptions[field.name] = options;
+            this.cd.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Autocomplete error:', err);
+            this.autocompleteOptions[field.name] = [];
+          }
+        })
+      ).subscribe();
+      
+    } else {
+      this.autocompleteOptions[field.name] = [];
+    }
+  }
+  
+
+  selectAutocompleteOption(field: FieldDefinition, option: string) {
+    this.fieldValues[field.name] = option;
+    this.autocompleteOptions[field.name] = [];
+  }
+
+  onAutocompleteButtonClick(field: FieldDefinition): void {
+    const currentValue = this.fieldValues[field.name] || '';
+    // Convertim obiectul la unknown, apoi la Event
+    this.onAutocompleteInput(field, { target: { value: currentValue } } as unknown as Event);
+  }
 
 }

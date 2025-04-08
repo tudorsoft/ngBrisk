@@ -203,6 +203,32 @@ export class DataTableComponent implements OnInit {
     return this.isNumericColumn(column) ? 'text-right' : 'text-left';
   }
 
+  getColumnColor(colName: string, value: any): string {
+    const colDef = this.columns.find(col => col.name === colName);
+    if (colDef && colDef.colorMapping) {
+      return colDef.colorMapping(value);
+    }
+    return '';
+  }
+  
+  hasColorMapping(colName: string): boolean {
+    const colDef = this.columns.find(col => col.name === colName);
+    return !!(colDef && colDef.colorMapping);
+  }
+
+  getColumnPicture(colName: string, value: any): string {
+    const colDef = this.columns.find(col => col.name === colName);
+    if (colDef && colDef.pictureMapping) {
+      return colDef.pictureMapping(value);
+    }
+    return '';
+  }
+  
+  hasPictureMapping(colName: string): boolean {
+    const colDef = this.columns.find(col => col.name === colName);
+    return !!(colDef && colDef.pictureMapping);
+  }
+
   // Exemplu de formatare a numerelor; poți adapta implementarea după necesități
   formatNumber(value: any, column: ColumnDefinition): string {
     if (value == null) return '';
