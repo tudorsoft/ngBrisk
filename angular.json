@@ -30,7 +30,12 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+		{
+		    "glob": "web-proxy.php",
+		    "input": "src",
+		    "output": "./"
+		  }
             ],
             "styles": [
               "src/styles.scss",
