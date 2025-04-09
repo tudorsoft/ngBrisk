@@ -178,7 +178,7 @@ export class PvComponent implements OnInit {
     
     const apiEndpoint = this.storageService.cDatabaseUrl+'/wngPv';
     const body = { id: recordId };
-    console.log('Fetching details from:', apiEndpoint, 'with body:', body);
+    //console.log('Fetching details from:', apiEndpoint, 'with body:', body);
   
     this.httpProxyService.post<any>( apiEndpoint, body, 
         undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -189,7 +189,7 @@ export class PvComponent implements OnInit {
           const record = Array.isArray(detailData) ? detailData[0] : detailData;
           this.currentRecordDetail = record;
           this.fieldValues = record || {};
-          console.log('fieldValues actualizat:', this.fieldValues);
+          //console.log('fieldValues actualizat:', this.fieldValues);
           this.cd.detectChanges();
         },
         error: (err) => {
