@@ -16,16 +16,23 @@ if (!isset($_GET['api'])) {
 $apiUrl = urldecode($_GET['api']);
 $method = $_SERVER['REQUEST_METHOD'];
 
-$data = file_get_contents('php://input');
-$jsonBody = json_decode( $data, true);
-
-
-if (json_last_error() !== JSON_ERROR_NONE) {
-    http_response_code(400);
-    header('Content-Type: application/json');
-    echo json_encode(["error" => "Invalid JSON received."]);
-    exit;
+if ($method === 'POST') {
+    $data = file_get_contents('php://input');
+    if (!empty($data)) {
+        $jsonBody = json_decode( $data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            http_response_code(400);
+            header('Content-Type: application/json');
+            echo json_encode(["error" => "Invalid JSON received."]);
+            exit;
+        }
+    } else {
+        $jsonBody = []; // sau poți seta la null, în funcție de nevoi
+    }
+} else {
+    $jsonBody = [];  // Pentru GET sau alte metode fără body
 }
+
 
 // Determină dacă cererea este de tip autocomplete
 if ($method === 'POST' && $jsonBody && isset($jsonBody['autocomplete']) ) {
@@ -48,10 +55,12 @@ $urlEncodedData = json_encode($jsonBody);
 if ($method === 'POST') {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $urlEncodedData );
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/x-www-form-urlencoded'
-    ]);
 }
+
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/x-www-form-urlencoded',
+    'Accept: application/json'
+]);
 
 $response = curl_exec($ch);
 if ($response === false) {

@@ -1,11 +1,10 @@
 //menu.service.ts:
 //-----------------
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
-import { environment } from '../../environments/environment';
+import { HttpProxyService } from '../services/http-proxy.service';
 
 export interface MenuItem {
   label: string;
@@ -19,45 +18,24 @@ export interface MenuItem {
 })
 
 export class MenuService {
-  private apiUrl: string;
-  constructor(private http: HttpClient, private storageService: StorageService) {
-    this.apiUrl = this.storageService.cDatabaseUrl.endsWith('/') ?
-                  this.storageService.cDatabaseUrl.slice(0, -1) + '/wngMenu' :
-                  this.storageService.cDatabaseUrl + '/wngMenu';
+  constructor(
+      private httpProxyService: HttpProxyService,
+      private storageService: StorageService) {
   }
   getMenu(): Observable<MenuItem[]> {
     let apiUrl = this.storageService.cDatabaseUrl;
     if (!apiUrl) {
       throw new Error('URL-ul API-ului nu este setat.');
     }
-
-    /*apiUrl = apiUrl + '/wngMenu';
-    return this.http.get<MenuItem[]>(apiUrl).pipe(
+    return this.httpProxyService.get<MenuItem[]>(apiUrl + '/wngMenu').pipe(
       tap({
         next: (menuItems) => {
-          //console.log('MenuService items received from API:', menuItems);
+          // console.log('MenuService items received from API via proxy:', menuItems);
         },
         error: (err) => {
-          console.warn('Error fetching menu items:', err);
+          console.warn('Error fetching menu items via proxy:', err);
         }
       })
-    ); */
-    
-    apiUrl = apiUrl + '/wngMenu';
-    const fullUrl = environment.useProxy
-      ? 'web-proxy.php?api=' + encodeURIComponent(apiUrl)
-      : apiUrl;
-    return this.http.get<MenuItem[]>(fullUrl).pipe(
-      tap({
-        next: (menuItems) => {
-          // console.log('MenuService items received from API:', menuItems);
-        },
-        error: (err) => {
-          console.warn('Error fetching menu items:', err);
-        }
-      })
-    ); //.subscribe();
-
-
+    );
   }
 }

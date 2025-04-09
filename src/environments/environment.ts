@@ -7,5 +7,4 @@ export const environment = {
     //cDatabaseUrlLocal:    'http://localhost:8777',
     //cDatabaseUrlExternal: 'http://95.77.234.46:8777'
     useProxy: window.location.hostname.indexOf('localhost') !== -1 ? false : true,
-    proxyUrl: 'web-proxy.php'
-  };
+};

@@ -1,7 +1,7 @@
 
 // auth.service.ts:
 //----------------
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router            } from '@angular/router';
 import { BehaviorSubject   } from 'rxjs';
@@ -34,23 +34,12 @@ export class AuthService {
         }
   
     login(username: string, password: string) {
-        if (this.isAuthDisabled) {
-            return;
-        }
-      let apiUrl = this.storageService.cDatabaseUrl.endsWith('/') ? 
-                   this.storageService.cDatabaseUrl.slice(0, -1) : 
-                   this.storageService.cDatabaseUrl;
-      if (apiUrl !== '') {
-        const loginUrl = apiUrl + '/wngLogin';
-        const fullUrl = environment.useProxy
-          ? 'web-proxy.php?api=' + encodeURIComponent(loginUrl)
-          : loginUrl;
-        const body = { username, password }; // Obiectul JSON
-        
-        this.http.post<any>(
-          fullUrl,
-          body,
-          { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      if (this.isAuthDisabled) {
+          return;
+      }
+      if (this.storageService.cDatabaseUrl !== '') {
+        this.httpProxyService.post<any>( this.storageService.cDatabaseUrl + '/wngLogin', { username, password },
+          undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
         ).subscribe(
           response => {
             if (response.success) {
@@ -69,32 +58,7 @@ export class AuthService {
             alert('An error occurred. Please try again.');
           }
         );
-
-        /*const fullUrl = apiUrl + '/wngLogin';
-          this.http.post<any>(
-            fullUrl, 
-            { username, password },
-            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-        ).subscribe(response => {
-          if (response.success) {
-            localStorage.setItem('logged_user' , response.username);
-            localStorage.setItem('logged_name' , response.name);
-            localStorage.setItem('logged_email', response.email);
-            localStorage.setItem('logged_token', response.token);
-            this.loggedIn.next(true);
-            
-            // Navighează din nou la ruta curentă
-            this.navigationService.reloadCurrentRoute();
-
-          } else {
-            alert(response.message);
-          }
-        }, error => {
-          console.error('Error during login:', error);
-          alert('An error occurred. Please try again.');
-        });*/
       }
-
     }
   
     logout() {

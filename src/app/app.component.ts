@@ -24,7 +24,6 @@ import { LoadingService } from './services/loading.service';
   styleUrls: ['./app.component.scss'] 
 })
 export class AppComponent implements OnInit {
-  public cDatabaseUrl: string = '';
   title = "BRISK";
   loggedInUser: string = ''; 
   isMenuVisible: boolean = false;
@@ -48,16 +47,8 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-
-
-    //this.loadingService.show();
-    //setTimeout(() => this.loadingService.hide(), 5000);
-
-
     try {
       await this.storageService.loadConfig();
-      this.cDatabaseUrl = this.storageService.cDatabaseUrl;
-
       await this.loadDynamicRoutes();
   
       if (!this.authService.isLoggedIn()) {

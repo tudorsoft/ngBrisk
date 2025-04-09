@@ -140,17 +140,7 @@ export class PvComponent implements OnInit {
     }
   }
 
-
   fetchData(filterDatabase?: any[]) {
-    let baseUrl = this.storageService.cDatabaseUrl;
-    if (baseUrl.endsWith('/')) {
-      baseUrl = baseUrl.slice(0, -1);
-    }
-    const apiEndpoint = `${baseUrl}/wngPv`;
-    const fullUrl = environment.useProxy
-      ? 'web-proxy.php?api=' + encodeURIComponent(apiEndpoint)
-      : apiEndpoint;
-  
     // Construiește corpul cererii
     const body: { [key: string]: any } = {};
     if (filterDatabase) {
@@ -161,23 +151,9 @@ export class PvComponent implements OnInit {
       });
     }
     //console.log('Body JSON trimis:', body);
-    let request$: Observable<any[]>;
-    if (environment.useProxy) {
-      request$ = this.httpProxyService.post<any[]>(
-        apiEndpoint,
-        body,
-        undefined,
-        new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
-      );
-    } else {
-      request$ = this.http.post<any[]>(
-        fullUrl,
-        body,
-        { headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' }) }
-      );
-    }
-  
-    request$.subscribe({
+    this.httpProxyService.post<any[]>(  this.storageService.cDatabaseUrl+'/wngPV', body,
+      undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
+    ).subscribe({
       next: response => {
         this.filteredData = [...response];
         this.recordCount = this.filteredData.length;
@@ -186,7 +162,7 @@ export class PvComponent implements OnInit {
         this.dataUpdated.emit(this.filteredData);
       },
       error: error => {
-        console.error('Eroare accesare ' + fullUrl, error);
+        console.error('Eroare accesare ', error);
         this.errorMessage = this.errorService.getErrorMessage(error);
         this.filteredData = [];
         this.recordCount = 0;
@@ -194,43 +170,19 @@ export class PvComponent implements OnInit {
     });
   }
 
-
-
   fetchDataDetail(recordId: string) {
     // Resetează valorile curente
     this.fieldValues = {};
     this.currentRecordDetail = null;
     this.cd.detectChanges();
-  
-    let baseUrl = this.storageService.cDatabaseUrl;
-    if (baseUrl.endsWith('/')) {
-      baseUrl = baseUrl.slice(0, -1);
-    }
     
-    const apiEndpoint = `${baseUrl}/wngPv`;
+    const apiEndpoint = this.storageService.cDatabaseUrl+'/wngPv';
     const body = { id: recordId };
     console.log('Fetching details from:', apiEndpoint, 'with body:', body);
   
-    let request$: Observable<any>;
-  
-    if (environment.useProxy) {
-      // Folosim httpProxyService care construiește URL-ul proxy intern
-      request$ = this.httpProxyService.post<any>(
-        apiEndpoint, 
-        body, 
-        undefined, 
-        new HttpHeaders({ 'Content-Type': 'application/json' })
-      );
-    } else {
-      // Folosim apelul direct
-      request$ = this.http.post<any>(
-        apiEndpoint, 
-        body, 
-        { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
-      );
-    }
-  
-    request$.pipe(
+    this.httpProxyService.post<any>( apiEndpoint, body, 
+        undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
+    ).pipe(
       tap({
         next: (detailData) => {
           // Presupunem că detailData este un array; extragem primul element

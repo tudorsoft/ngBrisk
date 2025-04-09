@@ -42,33 +42,15 @@ export class StorageService {
   get cDatabaseUrl(): string {
     return this.cDatabaseUrlSubject.value;
   }
-
+  
   async testIPs(): Promise<string> {
-    /*
-    const ipLocal = environment.cDatabaseUrlLocal;
-    const ipExternal = environment.cDatabaseUrlExternal;
-    const timeout = 5000; // 5 secunde
-
-    const testIp = (url: string): Promise<string | null> => {
-      return this.http
-        .get(url + '/wngLogin')
-        .pipe(
-          catchError(() => of(null))
-        )
-        .toPromise()
-        .then(() => url)
-        .catch(() => null);
-    };
-    */
-    const ipLocal = environment.cDatabaseUrlLocal;
+    const ipLocal    = environment.cDatabaseUrlLocal;
     const ipExternal = environment.cDatabaseUrlExternal;
     const timeout = 5000; // 5 secunde
     
     const testIp = (url: string): Promise<string | null> => {
+      console.log('testIP: ', url);
       let testUrl = url + '/wngLogin';
-      if (environment.useProxy) {
-        testUrl = 'web-proxy.php?api=' + encodeURIComponent(testUrl);
-      }
       return this.http
         .get(testUrl)
         .pipe(
@@ -79,15 +61,20 @@ export class StorageService {
         .catch(() => null);
     };
 
-    const localRequest = testIp(ipLocal);
-    const externalRequest = testIp(ipExternal);
+    // Construim lista de promisiuni în funcție de environment.useProxy
+    let testPromises: Promise<string | null>[];
+    if (environment.useProxy === false) {
+      testPromises = [ testIp(ipLocal), testIp(ipExternal) ];
+    } else {
+      testPromises = [ testIp(ipExternal) ];
+    }
 
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('Timeout')), timeout)
     );
 
     try {
-      const result = await Promise.race([localRequest, externalRequest, timeoutPromise]);
+      const result = await Promise.race([ ...testPromises, timeoutPromise ]);
       if (typeof result === 'string') {
         return result; // Returnăm IP-ul care a răspuns
       } else {
@@ -100,7 +87,10 @@ export class StorageService {
 
   async loadConfig(): Promise<void> {
     try {
-      const activeDatabaseUrl = await this.testIPs();
+      let activeDatabaseUrl = await this.testIPs();
+      if (activeDatabaseUrl.endsWith('/')) {
+        activeDatabaseUrl = activeDatabaseUrl.slice(0, -1);
+      }
       this.cDatabaseUrlSubject.next(activeDatabaseUrl);
       localStorage.setItem('cDatabaseUrl', activeDatabaseUrl);
       console.log('IP functional:', activeDatabaseUrl);

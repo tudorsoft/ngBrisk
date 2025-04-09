@@ -20,14 +20,12 @@ import { CompaniesComponent       } from '../nomenclatures/companies.component';
 
 export class MenuTree {
   constructor(private menuService: MenuService) {}
-
   // Funcția care creează rutele pe baza structurilor dinamic obținute
   createRoutes(menuItems: MenuItem[], guards: any[] = []): Routes {
     const routes: Routes = [];
-
     menuItems.forEach(item => {
       if (item.route && item.component) {
-        //console.log('Creating route for item:', item); 
+        console.log('Creating route for item:', item); 
         const path = item.route.startsWith('/') ? item.route.substring(1) : item.route;
         routes.push({
           path: path,
@@ -40,7 +38,7 @@ export class MenuTree {
         routes.push(...this.createRoutes(item.children, guards)); // Recursiv pentru copii
       }
     });
-    //console.log('Routes created:', routes);
+    console.log('Routes created:', routes);
     return routes;
   }
 
@@ -61,7 +59,7 @@ export class MenuTree {
     getMenuFromApi(): Observable<MenuItem[]> {
       return this.menuService.getMenu().pipe(
         tap((menuItems: MenuItem[]) => { // Specifică tipul aici
-          //console.log('MenuTree items received from API:', menuItems);
+          console.log('MenuTree items received from API:', menuItems);
         })
       );
     }

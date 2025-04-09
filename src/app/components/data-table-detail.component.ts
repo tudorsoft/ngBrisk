@@ -10,7 +10,6 @@ import { SectionDefinition, FieldDefinition } from './type-definition';
 import { StorageService } from '../services/storage.service';
 import { HttpProxyService } from '../services/http-proxy.service';
 import { getSqlString } from '../utils/sql.utils';
-import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-data-table-detail',
@@ -90,9 +89,6 @@ ngOnChanges(changes: SimpleChanges) {
     return Object.keys(groups).map(key => groups[key]);
   }
 
-
-
-
   getTableRows(section: SectionDefinition): any[] {
     // Presupunem că pentru secțiunea tabelară, currentRecordDetail are proprietatea cu numele secțiunii
     if (this.currentRecordDetail && this.currentRecordDetail[section.name]) {
@@ -110,18 +106,12 @@ ngOnChanges(changes: SimpleChanges) {
     const inputValue = inputElement.value;
     
     if (inputValue && inputValue.length >= 2) {
-      let baseUrl = this.storageService.cDatabaseUrl;
-      if (baseUrl.endsWith('/')) {
-        baseUrl = baseUrl.slice(0, -1);
-      }
       const body: { [key: string]: any } = {};
             body['autocomplete'] = true;
             body['sql'] = getSqlString(field.sql || '', inputValue) || '';
-      
-      let request$: Observable<any[]>;
       ///////////////////
       this.httpProxyService.post<any[]>(
-              `${baseUrl}/wngSQL`,
+              `${this.storageService.cDatabaseUrl}/wngSQL`,
               body,
               undefined,
               new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -138,6 +128,7 @@ ngOnChanges(changes: SimpleChanges) {
                   }
                 })
               ).subscribe();
+      //////////////////////
     } else {
       this.autocompleteOptions[field.name] = [];
     }

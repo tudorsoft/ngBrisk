@@ -14,7 +14,6 @@ export class HttpProxyService {
   constructor(private http: HttpClient) {}
 
   get<T>(apiUrl: string, params?: HttpParams, headers?: HttpHeaders): Observable<T> {
-    // Construiți URL-ul complet pentru proxy, codificând URL-ul API
     const fullUrl = `${this.proxyUrl}?api=${encodeURIComponent(apiUrl)}`;
     return this.http.get<T>(fullUrl, { params, headers });
   }
