@@ -1,7 +1,7 @@
 //pv.component.ts:
 //----------------------
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ChangeDetectorRef, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule      } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { tap } from 'rxjs/operators'; 
@@ -23,21 +23,21 @@ export class PvComponent implements OnInit {
   columns : ColumnDefinition[] = [
     //{ label: 'ID', name: 'id', type: 'numeric', width: '70px' },
     { label: 'Data', name: 'data_doc', type: 'date', fixed: "left", width: '100px' },
-    { label: 'S', name: 'semnat', type: 'check', width: '32px', align: 'center',
+    { label: 'S', name: 'semnat', type: 'check', width: '36px', align: 'center',
       colorMapping: (value: any) => {
         if (value === 0) { return 'red'; } else 
         if (value === 1) { return 'lightgreen'; } else 
         if (value === 2) { return '#485F99'; } else { return 'transparent'; }
       }
     },
-    { label: 'A', name: 'nrfis', type: 'check', width: '32px', align: 'center',
+    { label: 'A', name: 'nrfis', type: 'check', width: '36px', align: 'center',
       pictureMapping: (value: any) => {
         if (value === 1) return '/assets/attachment.png'; else return '';
       }
     },
     { label: 'Numar', name: 'numar', type: 'text', fixed: "left" },
     { label: 'Client', name: 'den_firma', type: 'text' },
-    { label: 'P.Lucru', name: 'den_plfrm', type: 'text' },
+    { label: 'P.Lucru', name: 'den_plfrm', type: 'text', placeholder: 'punct lucru' },
     { label: 'Categ.', name: 'den_comcat', type: 'text' },
     { label: 'Facturat', name: 'facturat', type: 'check', align: 'center', width: "50px", fixed: "right"},
     //{ label: 'Valoare', name: 'valoare', type: 'numeric', showTotal: true, decimals: 2 },
@@ -59,7 +59,7 @@ export class PvComponent implements OnInit {
         { label: 'Numar', name: 'numar', type: 'text', group: '2' },
         { label: 'Categ.', name: 'den_comcat', type: 'text', group: '3' },
         { label: 'Client', name: 'den_firma', type: 'autocomplete', group: '4', sql: 'facturi.firme', autocomplete: true },
-        { label: 'P.Lucru', name: 'den_plfrm', type: 'text', group: '5' },
+        { label: 'P.Lucru', name: 'den_plfrm', type: 'text', group: '5', placeholder: 'punct lucru' },
         { label: 'Subiect', name: 'asobssubiect', type: 'text', group: '6' },
         { label: 'Descriere', name: 'obs', type: 'textarea', group: '7' },
         { label: 'Persoana', name: 'aspersclient', type: 'text', group: '8' },
@@ -96,15 +96,22 @@ export class PvComponent implements OnInit {
   currentRecordDetail: any = null;
   fieldValues: { [key: string]: any } = {};
   autocompleteOptions: { [fieldName: string]: string[] } = {};
+  @ViewChild('wrapper') wrapper!: DataTableDetailComponent;
 
   constructor( public storageService: StorageService, 
                private errorService: ErrorService,
-               private http: HttpClient,
                private httpProxyService: HttpProxyService, 
                private cd: ChangeDetectorRef ) {}
 
   ngOnInit() {
     this.fetchData();
+  }
+
+  ngAfterViewInit(): void {
+    // La acest moment, 'wrapper' ar trebui să fie disponibil
+    if (!this.wrapper) {
+      console.error('Wrapper-ul pentru data-table-detail nu a fost găsit!');
+    }
   }
 
   // Funcție pentru a actualiza valorile câmpurilor de filtrare
@@ -132,13 +139,43 @@ export class PvComponent implements OnInit {
     this.fetchData(filterDatabase); // ✅ apel doar când formularul e gata
   }
 
-  onRecordDblClick(record: any): void {
-    if (record && record.id) {
-      this.fetchDataDetail(record.id);
+  onRecordDblClick(event: any): void {
+    const record = event && event.record ? event.record : event;
+    const editMode = event && typeof event.editMode !== 'undefined' ? event.editMode : true;
+  
+    if (editMode) {
+      // Fluxul pentru modificare – la dublu-click se apelează fetchDataDetail
+      if (record && record.id) {
+        this.fetchDataDetail(record.id, true);
+      } else {
+        console.warn('"record" nu conține un id valid.');
+      }
     } else {
-      console.warn('"record" nu conține un id valid.');
+      // Flux pentru Adăugare: construim un obiect gol folosind secțiunile
+      const emptyDetailRecord: any = {};
+      // Adaugă proprietatea 'id' ca sa functioneze ecran detalii cu campuri goale (la adaugare)
+      emptyDetailRecord['id'] = '';
+      // Inițializează toate câmpurile din secțiuni
+      this.sections.forEach(section => {
+        if (section.fields) {
+          section.fields.forEach(field => {
+            emptyDetailRecord[field.name] = '';
+          });
+        }
+      });
+      console.log('Empty detail record pentru Adăugare:', emptyDetailRecord);
+      this.currentRecordDetail = [emptyDetailRecord];
+      this.fieldValues = emptyDetailRecord;
+      if (this.wrapper) {
+        this.wrapper.openDetail(emptyDetailRecord);
+      } else {
+        console.error('Wrapper-ul nu este disponibil!');
+      }
+      this.cd.detectChanges();
     }
   }
+
+
 
   fetchData(filterDatabase?: any[]) {
     // Construiește corpul cererii
@@ -170,27 +207,31 @@ export class PvComponent implements OnInit {
     });
   }
 
-  fetchDataDetail(recordId: string) {
-    // Resetează valorile curente
+  fetchDataDetail(recordId: string, openAfterFetch: boolean = false) {
+    // Resetăm valorile curente
     this.fieldValues = {};
     this.currentRecordDetail = null;
     this.cd.detectChanges();
-    
-    const apiEndpoint = this.storageService.cDatabaseUrl+'/wngPv';
-    const body = { id: recordId };
-    //console.log('Fetching details from:', apiEndpoint, 'with body:', body);
   
-    this.httpProxyService.post<any>( apiEndpoint, body, 
-        undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
+    const apiEndpoint = this.storageService.cDatabaseUrl + '/wngPv';
+    const body = { id: recordId };
+  
+    this.httpProxyService.post<any>(apiEndpoint, body,
+      undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
     ).pipe(
       tap({
         next: (detailData) => {
-          // Presupunem că detailData este un array; extragem primul element
+          // Extragem recordul din răspuns; dacă nu este un array, folosim direct
           const record = Array.isArray(detailData) ? detailData[0] : detailData;
-          this.currentRecordDetail = record;
+          // Asigurăm forma de array (deoarece getFieldValue se bazează pe currentRecordDetail[0])
+          this.currentRecordDetail = [record];
           this.fieldValues = record || {};
-          //console.log('fieldValues actualizat:', this.fieldValues);
+          console.log('Detaliile primite:', record);
           this.cd.detectChanges();
+          // Dacă suntem în fluxul de modificare și s-a specificat openAfterFetch, deschidem ecranul de detalii
+          if (openAfterFetch && this.wrapper) {
+            this.wrapper.openDetail(record);
+          }
         },
         error: (err) => {
           console.error('Eroare la preluarea detaliilor:', err);
@@ -198,5 +239,7 @@ export class PvComponent implements OnInit {
       })
     ).subscribe();
   }
+
+
 
 }

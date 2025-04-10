@@ -2,6 +2,8 @@
 //------------------------------
 import { Component, Input, Output, OnInit, AfterViewChecked, EventEmitter, ChangeDetectorRef, SimpleChanges } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { tap } from 'rxjs/operators'; 
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -22,55 +24,32 @@ export class DataTableDetailComponent {
   @Input() currentRecordDetail: any;
   @Input() fieldValues: { [key: string]: any } = {};
   @Output() detailRequested = new EventEmitter<any>();
-
+  @Output() closeDetail: EventEmitter<void> = new EventEmitter<void>();
+  
   detailMode: boolean = false;
   activeSection: SectionDefinition | null = null;
   currentRecord: any = null;
-  autocompleteOptions: { [fieldName: string]: string[] } = {};
-
+  autocompleteOptions: { [fieldName: string]: any[] } = {};
+  
   constructor(
     private storageService: StorageService,
     private http: HttpClient,
     private httpProxyService: HttpProxyService,
     private cd: ChangeDetectorRef
-  ) { }
+    
+  ) {
+
+   }
   
-ngOnChanges(changes: SimpleChanges) {
+ngOnChanges(changes: SimpleChanges): void {
   /*if (changes['currentRecordDetail']) {
     console.log('currentRecordDetail s-a actualizat:', this.currentRecordDetail);
   }*/
 }
 
-  // Apelată la dublu-click pe o înregistrare din listă
-  openDetail(record: any): void {
-    console.log('openDetail primit record:', record);
-    this.detailMode = true;
-    this.currentRecord = record;
-    if (this.sections && this.sections.length > 0) {
-      this.activeSection = this.sections[0];
-    }
-    // Emite evenimentul către părinte
-    this.detailRequested.emit(record);
-  }
-
-  backToList() {
-    this.detailMode = false;
-  }
-
   selectSection(section: SectionDefinition): void {
     this.activeSection = section;
   }
-
-  getFieldValue(fieldName: string): string {
-    let record = this.currentRecordDetail[0];
-    /*if (Array.isArray(record)) {
-      record = record[0];
-    } */
-    const value = record && record[fieldName] ? record[fieldName] : '';
-    console.log(`Valoarea pentru ${fieldName}:`, value);
-    return value;
-  }
-
 
   getGroupedFields(section: SectionDefinition): FieldDefinition[][] {
     if (!section.fields || section.fields.length === 0) {
@@ -107,14 +86,11 @@ ngOnChanges(changes: SimpleChanges) {
     
     if (inputValue && inputValue.length >= 2) {
       const body: { [key: string]: any } = {};
-            body['autocomplete'] = true;
-            body['sql'] = getSqlString(field.sql || '', inputValue) || '';
+      body['autocomplete'] = true;
+      body['sql'] = getSqlString(field.sql || '', inputValue) || '';
       ///////////////////
-      this.httpProxyService.post<any[]>(
-              `${this.storageService.cDatabaseUrl}/wngSQL`,
-              body,
-              undefined,
-              new HttpHeaders({ 'Content-Type': 'application/json' })
+      this.httpProxyService.post<any[]>( `${this.storageService.cDatabaseUrl}/wngSQL`, body,
+              undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
             ).pipe(
                 tap({
                   next: (options: string[]) => {
@@ -134,15 +110,66 @@ ngOnChanges(changes: SimpleChanges) {
     }
   }
 
-  selectAutocompleteOption(field: FieldDefinition, option: string) {
-    this.fieldValues[field.name] = option;
+  selectAutocompleteOption(field: FieldDefinition, option: any): void {
+    this.fieldValues[field.name] = option[field.name] || option;
     this.autocompleteOptions[field.name] = [];
   }
 
   onAutocompleteButtonClick(field: FieldDefinition): void {
     const currentValue = this.fieldValues[field.name] || '';
-    // Convertim obiectul la unknown, apoi la Event
-    this.onAutocompleteInput(field, { target: { value: currentValue } } as unknown as Event);
+    this.onAutocompleteInput(field, { target: { value: currentValue } } as unknown as Event); // Convertim obiectul la unknown, apoi la Event
   }
+
+  getFieldDefinition(fieldName: string): FieldDefinition | undefined {
+    if (!this.activeSection || !this.activeSection.fields) {
+      return undefined;
+    }
+    return this.activeSection.fields.find(field => field.name === fieldName);
+  }
+  
+  
+// Apelată la dublu-click pe o înregistrare din listă
+openDetail(record: any): void {
+  console.log('openDetail primit record:', record);
+  this.detailMode = true;
+  this.currentRecord = record;
+  // Setăm activeSection, dacă sunt secțiuni definite
+  if (this.sections && this.sections.length > 0) {
+    this.activeSection = this.sections[0];
+  }
+  // Nu emitem detailRequested aici pentru a evita bucla
+  this.cd.detectChanges();
+}
+
+
+  onCancel(): void {
+    this.detailMode = false;
+  }
+
+  onSave(): void {
+    // Diferentiere inserare/actualizare
+    console.log(this.currentRecord && this.currentRecord.id ? 'Actualizare' : 'Inserare');
+    
+  }
+
+  // Metoda simplificată pentru afișarea valorilor
+  getFieldValue(fieldName: string): string {
+    if (this.currentRecordDetail && this.currentRecordDetail.length > 0) {
+      let record = this.currentRecordDetail[0];
+      return record && record[fieldName] ? record[fieldName] : '';
+    }
+    return '';
+  }
+
+  /*getFieldValue(fieldName: string): string {
+    let record = this.currentRecordDetail;
+    if (Array.isArray(record)) {
+      record = record[0];
+    }
+    const value = record && record[fieldName] ? record[fieldName] : '';
+    console.log(`Valoarea pentru ${fieldName}:`, value);
+    return value;
+  } */
+
 
 }

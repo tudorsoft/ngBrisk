@@ -13,6 +13,7 @@ interface ColumnDefinition {
   showTotal?: boolean;
   decimals?: number;
   width?: string;
+  palceholder?: string;
 }
 
 @Component({

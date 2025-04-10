@@ -5,7 +5,7 @@
 
     --main-white0: #e1e5f0; /* cel mai deschis */
     --main-white1: #d9dff1; /* mai deschis */
-    --main-white2: #b9bece; /* cel mai inchis */
+    --main-white2: #BABECE; /* cel mai inchis */
   }
 html, body {
     height: 100%; /* Asigură că html și body ocupă întreaga înălțime */
@@ -24,4 +24,50 @@ html, body {
   }
 .fa-bars {
     font-size: 24px; /* Mărește dimensiunea iconiței */
+  }
+
+
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    //border-bottom: 1px dotted black; /* Linie punctată sub text */
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: var(--main-blue0); //#555;
+    color: white; //#fff;
+    text-align: center;
+    border-radius: 6px;
+
+    border-width: 0.1px;
+    border-style: solid;
+    border-color: var(--main-blue0);
+
+    padding: 2px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Poziționează tooltip-ul deasupra textului */
+    left: 50%;
+    margin-left: -60px; /* Centrează tooltip-ul */
+    opacity: 0;
+    transition: opacity 0.4s;
+    white-space: pre-line;
+  }
+  
+  .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: var(--main-blue0) transparent transparent transparent;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 0.85;
   }

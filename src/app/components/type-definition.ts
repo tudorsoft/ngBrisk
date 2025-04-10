@@ -9,6 +9,7 @@ export interface ColumnDefinition {
     width?: string;
     align?: string;
     fixed?: string;
+    placeholder?: string;
     colorMapping?: (value: any) => string;
     pictureMapping?: (value: any) => string;
   }
@@ -29,5 +30,6 @@ export interface ColumnDefinition {
     align?: string;
     group?: string;
     sql?: string;
+    placeholder?: string;
     autocomplete?: boolean;
   }

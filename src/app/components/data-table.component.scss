@@ -1,4 +1,4 @@
-.table-top {
+.list-top {
   display: flex;
   justify-content: space-between; /* Aliniază titlul și butonul la extremități */
   align-items: center; /* Centrează vertical elementele */
@@ -98,6 +98,14 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Umbră subtilă
 }
 
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap; 
+  align-items: center;
+  color: white;
+  margin-left: 8px;
+}
+
 .table-filter-reset,
 .table-filter-fields,
 .table-filter-refresh {
@@ -105,6 +113,7 @@
   flex-wrap: wrap; 
   align-items: center;
   cursor: pointer;
+  color: white;
 }
 
 .table-filter-form, .table-filter-fields  {
@@ -115,36 +124,40 @@
   padding: 2px;
 }
 
+.action-buttons button, 
 .table-filter-reset button,
 .table-filter-refresh button {
+  background-color:var(--main-blue0);
   font-size: 0.8rem;       
   padding: 0.3rem 0.6rem;  
   min-width: 40px;         
   box-sizing: border-box;  
-  border: none;
+  border: none; 
+  color: white;
+  cursor: pointer;
+}
+.action-buttons button {
+  margin-right:4px;
 }
 
+.action-buttons button i, 
 .table-filter-reset button i,
 .table-filter-refresh button i {
   color: white;
 }
 
+.action-buttons button:hover, 
 .table-filter-reset button:hover,
-.table-filter-refresh button:hover {
-  background-color:var(--main-blue2);
-}
-.table-filter-reset button,
-.table-filter-refresh button  {
-  background-color:var(--main-blue0);
+.table-filter-reset button:hover i,
+.table-filter-refresh button:hover,
+.table-filter-refresh button:hover i {
+  background-color: var(--main-white2);
+  color: var(--main-blue0);
 }
 
-
-
-.fas.fa-times {
-  color: white;
-}
 
 table.w3-table tr.selected {
   background-color: var(--main-blue0); // poți alege orice culoare potrivită
   color: white; // poți alege orice culoare potrivită
 }
+

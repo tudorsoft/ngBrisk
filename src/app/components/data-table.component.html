@@ -1,12 +1,23 @@
 <!-- data-table.component.html -->
-<div class="table-top">
+<div class="list-top">
     <h4 class="table-title">{{ title }} <span class="record-count">({{ recordCount }} inreg.)</span></h4>
 </div>
+
+<div class="action-buttons">
+  <button class="w3-round" (click)="onAdd()"   >Adaugă</button>
+  <button class="w3-round" (click)="onModify()">Modifică</button>
+  <button class="w3-round"                     >Diverse</button>
+  <button class="w3-round" (click)="onDelete()">Șterge</button>
+</div>
+
 <!-- Filtrele -->
 <div class="table-filter-area w3-container w3-light-grey" *ngIf="filterForm$ | async as filterForm">
     <div class="table-filter-reset w3-left">
-        <button class="w3-button w3-round" (click)="onResetFilters()"><i class="fas fa-times"></i></button>
-    </div>    
+        <button class="w3-round tooltip" (click)="onResetFilters()">
+          <span class="tooltiptext">{{ toolTipText('Resetare\r\nfiltru') }}</span>
+          <i class="fas fa-times"></i>
+        </button>
+    </div>
     <div class="table-filter-fields">
         <!-- <form [formGroup]="filterForm" class="w3-row filter-field"> -->
         <form *ngIf="filterFormSubject | async as filterForm" [formGroup]="filterForm" class="table-filter-form">
@@ -17,7 +28,6 @@
               class="w3-border w3-round"
               type="text"
               [formControlName]="field.name"
-              placeholder="{{ field.label }}..."
             />
             <input
               *ngIf="field.type === 'date'"
@@ -29,7 +39,10 @@
         </form>
     </div>
     <div class="table-filter-refresh w3-right">
-        <button class="w3-button w3-round" (click)="onRefresh()"><i class="fas fa-refresh"></i></button>
+        <button class="w3-round tooltip" (click)="onRefresh()">
+          <i class="fas fa-refresh"></i>
+          <span class="tooltiptext">Refresh</span>
+        </button>
     </div>
 </div>
 <div class="table-container">
@@ -37,7 +50,6 @@
         <thead>
             <tr class="table-header">
                 <th *ngFor="let col of columns; let i = index" 
-                    class="" 
                     (click)="sortData(col.name)"
                     [ngStyle]="{'width': getColumnWidth(col)}">
                     <span [ngClass]="{'sorted': sortColumn === col.name}">{{ col.label }}</span>
@@ -45,15 +57,14 @@
                         {{ sortDirection === 'asc' ? '▲' : '▼' }}
                     </span>
                 </th>
-              </tr>           
+            </tr>           
             <tr class="table-search">
                 <th *ngFor="let column of selectedColumns">
                     <input 
                         class="w3-input"
                         type="text" 
                         [ngModel]="getSearchValue(column)" 
-                        (ngModelChange)="setSearchValue(column, $event); filterData()" 
-                        placeholder="{{ column }}..." />
+                        (ngModelChange)="setSearchValue(column, $event); filterData()" >
                 </th>
             </tr>
             
@@ -63,8 +74,7 @@
             <tr *ngFor="let item of filteredData" 
                   (click)="onRowClick(item)" 
                   (dblclick)="onRowDblClick(item)"
-                  [class.selected]="item === selectedRecord"
-            >
+                  [class.selected]="item === selectedRecord">
 
                 <td *ngFor="let colName of selectedColumns"
                     [ngClass]="getAlignmentClass(getColumnDefinition(colName)!)"

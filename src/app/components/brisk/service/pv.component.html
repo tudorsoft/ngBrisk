@@ -1,9 +1,11 @@
+<!-- Componenta de detalii-->
 <app-data-table-detail 
     [sections]="sections" 
     [currentRecordDetail]="currentRecordDetail"
     [fieldValues]="fieldValues" 
-    #wrapper (detailRequested)="onRecordDblClick($event)"
->
+    #wrapper 
+    (detailRequested)="onRecordDblClick($event)">
+    
   <!-- Zona de listă: se păstrează exact logica existentă -->
   <div list>
     <ng-container *ngIf="filteredData.length; else noData">
@@ -18,7 +20,7 @@
         (filterDatabaseChange)="onFilterDatabaseChange($event)"
         (resetFilters)="onResetFilters()"
         [recordCount]="recordCount"
-        (recordDblClick)="wrapper.openDetail($event)"
+        (detailRequired)="onRecordDblClick($event)"
       >
       </app-data-table>
     </ng-container>
