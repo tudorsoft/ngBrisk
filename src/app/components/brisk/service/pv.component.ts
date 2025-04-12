@@ -1,6 +1,6 @@
 //pv.component.ts:
 //----------------------
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Component, ChangeDetectorRef, OnInit, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule      } from '@angular/common';
 import { FormGroup } from '@angular/forms';
@@ -22,7 +22,7 @@ export class PvComponent implements OnInit {
 //-------------------
   columns : ColumnDefinition[] = [
     //{ label: 'ID', name: 'id', type: 'numeric', width: '70px' },
-    { label: 'Data', name: 'data_doc', type: 'date', fixed: "left", width: '100px' },
+    { label: 'Data', name: 'data_doc', type: 'date', fixed: "left", width: '100px',  placeholder: 'data P.V.' },
     { label: 'S', name: 'semnat', type: 'check', width: '36px', align: 'center',
       colorMapping: (value: any) => {
         if (value === 0) { return 'red'; } else 
@@ -35,10 +35,10 @@ export class PvComponent implements OnInit {
         if (value === 1) return '/assets/attachment.png'; else return '';
       }
     },
-    { label: 'Numar', name: 'numar', type: 'text', fixed: "left" },
-    { label: 'Client', name: 'den_firma', type: 'text' },
+    { label: 'Numar', name: 'numar', type: 'text', fixed: "left", placeholder: 'numar P.V.', width: '80px' },
+    { label: 'Client', name: 'den_firma', type: 'text', placeholder: 'denumire client' },
     { label: 'P.Lucru', name: 'den_plfrm', type: 'text', placeholder: 'punct lucru' },
-    { label: 'Categ.', name: 'den_comcat', type: 'text' },
+    { label: 'Categ.', name: 'den_comcat', type: 'text',  placeholder: 'categorie P.V.' },
     { label: 'Facturat', name: 'facturat', type: 'check', align: 'center', width: "50px", fixed: "right"},
     //{ label: 'Valoare', name: 'valoare', type: 'numeric', showTotal: true, decimals: 2 },
   ];
@@ -58,8 +58,8 @@ export class PvComponent implements OnInit {
         { label: 'Data', name: 'data_doc', type: 'date', group: '1' },
         { label: 'Numar', name: 'numar', type: 'text', group: '2' },
         { label: 'Categ.', name: 'den_comcat', type: 'text', group: '3' },
-        { label: 'Client', name: 'den_firma', type: 'autocomplete', group: '4', sql: 'facturi.firme', autocomplete: true },
-        { label: 'P.Lucru', name: 'den_plfrm', type: 'text', group: '5', placeholder: 'punct lucru' },
+        { label: 'Client', name: 'den_firma', type: 'text', group: '4', placeholder: 'denumire client', sql: 'facturi.firme', autocomplete: false },
+        { label: 'P.Lucru', name: 'den_plfrm', type: 'text', group: '5', placeholder: 'punct de lucru', sql: 'facturi.firme_pl', autocomplete: false },
         { label: 'Subiect', name: 'asobssubiect', type: 'text', group: '6' },
         { label: 'Descriere', name: 'obs', type: 'textarea', group: '7' },
         { label: 'Persoana', name: 'aspersclient', type: 'text', group: '8' },
@@ -95,7 +95,7 @@ export class PvComponent implements OnInit {
   columnLabels   : string[] = this.columns.map(col => col.label);
   currentRecordDetail: any = null;
   fieldValues: { [key: string]: any } = {};
-  autocompleteOptions: { [fieldName: string]: string[] } = {};
+
   @ViewChild('wrapper') wrapper!: DataTableDetailComponent;
 
   constructor( public storageService: StorageService, 
@@ -109,9 +109,9 @@ export class PvComponent implements OnInit {
 
   ngAfterViewInit(): void {
     // La acest moment, 'wrapper' ar trebui să fie disponibil
-    if (!this.wrapper) {
-      console.error('Wrapper-ul pentru data-table-detail nu a fost găsit!');
-    }
+    //if (!this.wrapper) {
+    //  console.error('Wrapper-ul pentru data-table-detail nu a fost găsit!');
+    //}
   }
 
   // Funcție pentru a actualiza valorile câmpurilor de filtrare
@@ -175,8 +175,6 @@ export class PvComponent implements OnInit {
     }
   }
 
-
-
   fetchData(filterDatabase?: any[]) {
     // Construiește corpul cererii
     const body: { [key: string]: any } = {};
@@ -239,7 +237,5 @@ export class PvComponent implements OnInit {
       })
     ).subscribe();
   }
-
-
 
 }

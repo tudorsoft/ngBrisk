@@ -43,6 +43,7 @@ export class DataTableComponent implements OnInit {
 
     searchValues: string[] = [];
     selectedColumns: string[] = [];
+    
     originalData: any[] = []; // Copie a datelor originale
     filterValues: any = {}; // Obiect pentru a stoca valorile câmpurilor de filtrare
     filterDatabase: any[] = []; // Obiect pentru a stoca filtrele în format { name, value }
@@ -56,8 +57,9 @@ export class DataTableComponent implements OnInit {
     @ViewChild(DataTableDetailComponent)
     private dataTableDetail!: DataTableDetailComponent;
 
-    constructor(private fb: FormBuilder, private cd: ChangeDetectorRef) {}
-
+    constructor(
+      private fb: FormBuilder, 
+      private cd: ChangeDetectorRef) {}
 
     toolTipText(textContent: string): string {
       return textContent.replace(/\\r\\n/g, '\n');
@@ -87,12 +89,7 @@ export class DataTableComponent implements OnInit {
         this.searchValues = Array(this.columns.length).fill('');
         this.selectedColumns = this.columns.map(col => col.name);
 
-
         this.initializeFilterFields();
-
-        //this.filterFields.forEach((field) => {
-        //    this.filterValues[field.name] = ''; // Inițializează valorile câmpurilor de filtrare
-        //});
     }
   
     ngOnChanges(changes: SimpleChanges) {

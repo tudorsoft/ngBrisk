@@ -1,138 +1,123 @@
 <!-- data-table-detail.component.html -->
 <div *ngIf="!detailMode">
-    <ng-content select="[list]"></ng-content>
+  <ng-content select="[list]"></ng-content>
 </div>
 
 <!-- Zona de detaliu: afișează header-ul cu butonul "Inapoi" și page frame-ul cu tab-uri -->
-<div *ngIf="detailMode">
+<div   *ngIf="detailMode; else loading">
 
-  <!-- Zona de detaliu cu tab-uri și câmpuri dinamice -->
-  <div class="detail-data-area w3-container w3-border w3-round">
+<!-- Zona de detaliu cu tab-uri și câmpuri dinamice -->
+<div class="detail-data-area w3-container w3-border w3-round">
 
-      <div class="detail-top w3-container w3-light-grey w3-border w3-round w3-padding-large">
-        <button class="w3-left w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
-      </div>
+    <div class="detail-top w3-container w3-light-grey w3-border w3-round w3-padding-large">
+      <button class="w3-left w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
+    </div>
 
-      <div class="page-frame w3-container w3-border w3-round">
-        <!-- Tab-urile secțiunilor -->
-        <ul class="tabs">
-          <li *ngFor="let section of sections"
-              (click)="selectSection(section)"
-              [class.active]="activeSection === section">
-            {{ section.label }}
-          </li>
-        </ul>
+    <div class="page-frame w3-container w3-border w3-round">
+      <!-- Tab-urile secțiunilor -->
+      <ul class="tabs">
+        <li *ngFor="let section of sections"
+            (click)="selectSection(section)"
+            [class.active]="activeSection === section">
+          {{ section.label }}
+        </li>
+      </ul>
 
-        <!-- Afișează câmpurile secțiunii active, dacă există -->
-        <!-- <div *ngIf="(fieldValues && fieldValues['id']) || !detailMode; else loading"> -->
-        <div *ngIf="(currentRecordDetail && currentRecordDetail.length > 0) || detailMode; else loading">
-          <!-- Dacă secțiunea activă se afișează ca tabel -->
-          <!-- //////////////////////////////////////////////////////////// -->
-          <div *ngIf="activeSection?.displayAsTable; else normalFields" class="fields-container">
-            <table class="w3-table w3-bordered w3-hoverable">
-              <thead>
-                <tr>
-                  <th *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let row of getTableRows(activeSection!)">
-                  <td *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">
-                    <ng-container [ngSwitch]="field.type">
-                      <ng-container *ngSwitchCase="'check'">
-                        <span class="checkbox-display">
-                          {{ row[field.name] == 1 ? '✔' : '' }}
-                        </span>
-                      </ng-container>
-                      <ng-container *ngSwitchDefault>
-                        <span>{{ row[field.name] || '' }}</span>
-                      </ng-container>
+      <!-- Afișează câmpurile secțiunii active, dacă există -->
+      <div>
+      
+        <!-- Dacă secțiunea activă se afișează ca tabel -->
+        <!-- //////////////////////////////////////////////////////////// -->
+        <div *ngIf="activeSection?.displayAsTable; else normalFields" class="fields-container">
+          <table class="w3-table w3-bordered w3-hoverable">
+            <thead>
+              <tr>
+                <th *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of getTableRows(activeSection!)">
+                <td *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">
+                  <ng-container [ngSwitch]="field.type">
+                    <ng-container *ngSwitchCase="'check'">
+                      <span class="checkbox-display">
+                        {{ row[field.name] == 1 ? '✔' : '' }}
+                      </span>
                     </ng-container>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <!-- //////////////////////////////////////////////////////////// -->
+                    <ng-container *ngSwitchDefault>
+                      <span>{{ row[field.name] || '' }}</span>
+                    </ng-container>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- //////////////////////////////////////////////////////////// -->
 
 
-          <!-- Afișare normală (pentru secțiunile care nu sunt tabelare) -->
-          <!-- //////////////////////////////////////////////////////////// -->
-          <ng-template #normalFields>
-            <div *ngIf="(activeSection?.fields || []).length > 0; else noFields" class="fields-container">
-              <ng-container *ngFor="let groupFields of getGroupedFields(activeSection!)">
-                <div class="group-container">
-                  <div *ngFor="let field of groupFields" class="detail-field">
-                    <div class="labels-row" [ngStyle]="{'text-align': field.align || 'left'}">
-                      <label [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}:</label>
-                    </div>
-                    <div class="inputs-row" [ngStyle]="{'text-align': field.align || 'left'}">
-                      <ng-container [ngSwitch]="field.type">
-                        <input class="w3-input w3-border w3-round" *ngSwitchCase="'text'" type="text" [value]="fieldValues[field.name] || ''" [ngStyle]="{'text-align': field.align || 'left'}"  />
+        <!-- Afișare normală (pentru secțiunile care nu sunt tabelare) -->
+        <!-- //////////////////////////////////////////////////////////// -->
+        <ng-template #normalFields>
+          <div *ngIf="(activeSection?.fields || []).length > 0; else noFields" class="fields-container">
+            <ng-container *ngFor="let groupFields of getGroupedFields(activeSection!)">
+              <div class="group-container">
+                <div *ngFor="let field of groupFields" class="detail-field">
+                  <div class="labels-row" [ngStyle]="{'text-align': field.align || 'left'}">
+                    <label [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}:</label>
+                  </div>
+                  <div class="inputs-row" [ngStyle]="{'text-align': field.align || 'left'}">
+                    <ng-container [ngSwitch]="field.type">
+                      <input class="w3-input w3-border w3-round" *ngSwitchCase="'text'" type="text" 
+                            [value]="fieldValues[field.name] || ''" 
+                            [ngStyle]="{'text-align': field.align || 'left'}"  
+                            [placeholder]="field.placeholder || ''"/>
 
-                        <textarea class="w3-input w3-border w3-round" *ngSwitchCase="'textarea'" [value]="fieldValues[field.name] || ''" ></textarea>
+                      <textarea class="w3-input w3-border w3-round" *ngSwitchCase="'textarea'" 
+                          [value]="fieldValues[field.name] || ''" 
+                          [placeholder]="field.placeholder || ''">
+                      </textarea>
 
-                        <input *ngSwitchCase="'date'" type="date" [value]="fieldValues[field.name] || ''" />
+                      <input *ngSwitchCase="'date'" type="date" [value]="fieldValues[field.name] || ''" />
 
-                        <input *ngSwitchCase="'numeric'" type="number" [value]="fieldValues[field.name] || ''" />
+                      <input *ngSwitchCase="'numeric'" type="number" 
+                        [value]="fieldValues[field.name] || ''" 
+                        [placeholder]="field.placeholder || ''"
+                      />
 
-                        <select *ngSwitchCase="'combo'" [value]="fieldValues[field.name] || ''" disabled>
-                          <option *ngFor="let option of field.values" [value]="option">{{ option }}</option>
-                        </select>
+                      <select *ngSwitchCase="'combo'" [value]="fieldValues[field.name] || ''" disabled>
+                        <option *ngFor="let option of field.values" [value]="option">{{ option }}</option>
+                      </select>
 
-                        <input *ngSwitchCase="'check'" type="checkbox" [checked]="fieldValues[field.name] == 1" disabled />
+                      <input *ngSwitchCase="'check'" type="checkbox" [checked]="fieldValues[field.name] == 1" disabled />
 
-                        <ng-container *ngSwitchCase="'autocomplete'">
-                          <div class="autocomplete-container" style="position: relative;">
-                            <input type="text" class="w3-input w3-border w3-round"
-                                  [value]="fieldValues[field.name] || ''"
-                                  (input)="onAutocompleteInput(field, $event)" /> 
-
-                                  <!-- <input type="text" class="w3-input w3-border w3-round"
-                                  [(ngModel)]="fieldValues[field.name]"
-                                  [ngModelOptions]="{ standalone: true }"
-                                  (ngModelChange)="onAutocompleteInput(field, $event)" />-->
-
-                            <!-- Buton pentru a deschide lista -->
-                            <button type="button" class="w3-border w3-round open-autocomplete-btn" (click)="onAutocompleteButtonClick(field)">
-                              &#9660;
-                            </button>
-                            <ul *ngIf="autocompleteOptions[field.name]?.length" class="autocomplete-list">
-                              <li *ngFor="let option of autocompleteOptions[field.name]"
-                                  (click)="selectAutocompleteOption(field, option)">
-                                  {{ option?.[field.name] }}
-                              </li>
-                            </ul>
-                          </div>
-                        </ng-container>
-
-                        <span *ngSwitchDefault>{{ fieldValues[field.name] || '' }}</span>
-                      </ng-container>
-                    </div>
+                      
+                      <span *ngSwitchDefault>{{ fieldValues[field.name] || '' }}</span>
+                    </ng-container>
                   </div>
                 </div>
-              </ng-container>
-            </div>
-          </ng-template>
-          <!-- ////////////////////////////////////////////////////////////////// -->
-        </div>
-
-        <ng-template #loading>
-          <p>Se incarca...</p>
+              </div>
+            </ng-container>
+          </div>
         </ng-template>
+        <!-- ////////////////////////////////////////////////////////////////// -->
+
         <ng-template #noFields>
           <p>Nu există câmpuri de afișat pentru această secțiune.</p>
         </ng-template>
-
+        
       </div>
 
-      <div class="detail-bottom w3-container w3-light-grey w3-border w3-round w3-padding-large">
-        <button class="w3-left w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
-        <button class="w3-right w3-round" (click)="onSave()"><i class="fas fa-save"></i> Salvează</button>
-      </div>
+    </div>
 
-  </div>
-
-
+    <div class="detail-bottom w3-container w3-light-grey w3-border w3-round w3-padding-large">
+      <button class="w3-left w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
+      <button class="w3-right w3-round" (click)="onSave()"><i class="fas fa-save"></i> Salvează</button>
+    </div>
 
 </div>
+
+</div>
+<ng-template #loading>
+<p>Se incarca...</p>
+</ng-template> 

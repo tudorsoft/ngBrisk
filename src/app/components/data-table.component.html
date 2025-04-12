@@ -59,12 +59,14 @@
                 </th>
             </tr>           
             <tr class="table-search">
-                <th *ngFor="let column of selectedColumns">
+                <th *ngFor="let column of columns">
                     <input 
                         class="w3-input"
                         type="text" 
-                        [ngModel]="getSearchValue(column)" 
-                        (ngModelChange)="setSearchValue(column, $event); filterData()" >
+                        [ngModel]="getSearchValue(column.name)" 
+                        (ngModelChange)="setSearchValue(column.name, $event); filterData()" 
+                        [placeholder]="column.placeholder || ''"
+                      />
                 </th>
             </tr>
             
