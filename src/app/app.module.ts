@@ -5,7 +5,7 @@ import { LoadingInterceptor } from './services/loading.interceptor';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule     } from '@angular/router';
 import { AppComponent  } from './app.component';
@@ -21,7 +21,9 @@ import { AuthGuard } from './services/auth.guard';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    ReactiveFormsModule,
+    HttpClientModule,
+
   ],
   exports: [RouterModule],
   providers: [

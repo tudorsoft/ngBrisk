@@ -55,44 +55,50 @@
         </div>
         <!-- //////////////////////////////////////////////////////////// -->
 
-
         <!-- Afișare normală (pentru secțiunile care nu sunt tabelare) -->
         <!-- //////////////////////////////////////////////////////////// -->
         <ng-template #normalFields>
           <div *ngIf="(activeSection?.fields || []).length > 0; else noFields" class="fields-container">
-            <ng-container *ngFor="let groupFields of getGroupedFields(activeSection!)">
+            <ng-container *ngFor="let groupFields of groupedFields">
               <div class="group-container">
                 <div *ngFor="let field of groupFields" class="detail-field">
-                  <div class="labels-row" [ngStyle]="{'text-align': field.align || 'left'}">
+                 <!--<div class="labels-row" [ngStyle]="{'text-align': field.align || 'left'}">
                     <label [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}:</label>
-                  </div>
+                  </div>-->
                   <div class="inputs-row" [ngStyle]="{'text-align': field.align || 'left'}">
                     <ng-container [ngSwitch]="field.type">
-                      <input class="w3-input w3-border w3-round" *ngSwitchCase="'text'" type="text" 
-                            [value]="fieldValues[field.name] || ''" 
-                            [ngStyle]="{'text-align': field.align || 'left'}"  
-                            [placeholder]="field.placeholder || ''"/>
+                      <mat-form-field *ngSwitchCase="'text'" appearance="outline" class="no-focus-style">
+                        <mat-label>{{ field.label }}</mat-label>  <!-- [placeholder]="field.placeholder || field.label" -->
+                        <input matInput [formControl]="getControl(field.name)" class="">
+                      </mat-form-field>
 
-                      <textarea class="w3-input w3-border w3-round" *ngSwitchCase="'textarea'" 
-                          [value]="fieldValues[field.name] || ''" 
-                          [placeholder]="field.placeholder || ''">
-                      </textarea>
+                      <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="uniform-width no-focus-style">
+                        <mat-label>{{ field.label }}</mat-label>
+                        <input matInput [matDatepicker]="picker" [formControl]="getControl(field.name)" class="">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
 
-                      <input *ngSwitchCase="'date'" type="date" [value]="fieldValues[field.name] || ''" />
+                      <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" class="uniform-width no-focus-style">
+                        <mat-label>{{ field.label }}</mat-label>
+                        <textarea matInput [formControl]="getControl(field.name)" class=""></textarea>
+                      </mat-form-field>
 
-                      <input *ngSwitchCase="'numeric'" type="number" 
-                        [value]="fieldValues[field.name] || ''" 
-                        [placeholder]="field.placeholder || ''"
-                      />
 
-                      <select *ngSwitchCase="'combo'" [value]="fieldValues[field.name] || ''" disabled>
-                        <option *ngFor="let option of field.values" [value]="option">{{ option }}</option>
-                      </select>
+                      <mat-form-field *ngSwitchCase="'autocomplete'" appearance="outline" class="uniform-width no-focus-style">
+                        <mat-label>{{ field.label }}</mat-label>
+                        <input matInput 
+                               [formControl]="getControl(field.name)"
+                               [matAutocomplete]="auto"
+                               (input)="onInputChange($event, field)"
+                               (focus)="onInputFocus($event, field)">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAutocompleteFactory(field.name)">
+                          <mat-option *ngFor="let option of autocompleteOptions[field.name]" [value]="option">
+                            {{ option ? option[field.name] : '' }}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
 
-                      <input *ngSwitchCase="'check'" type="checkbox" [checked]="fieldValues[field.name] == 1" disabled />
-
-                      
-                      <span *ngSwitchDefault>{{ fieldValues[field.name] || '' }}</span>
                     </ng-container>
                   </div>
                 </div>
