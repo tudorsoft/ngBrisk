@@ -69,19 +69,19 @@
                     <ng-container [ngSwitch]="field.type">
                       <mat-form-field *ngSwitchCase="'text'" appearance="outline" class="no-focus-style">
                         <mat-label>{{ field.label }}</mat-label>  <!-- [placeholder]="field.placeholder || field.label" -->
-                        <input matInput [formControl]="getControl(field.name)" class="">
+                        <input matInput [formControl]="getControl(field.name)" class="w3-input">
                       </mat-form-field>
 
                       <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="uniform-width no-focus-style">
                         <mat-label>{{ field.label }}</mat-label>
-                        <input matInput [matDatepicker]="picker" [formControl]="getControl(field.name)" class="">
+                        <input matInput [matDatepicker]="picker" [formControl]="getControl(field.name)" class="w3-input">
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                       </mat-form-field>
 
                       <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" class="uniform-width no-focus-style">
                         <mat-label>{{ field.label }}</mat-label>
-                        <textarea matInput [formControl]="getControl(field.name)" class=""></textarea>
+                        <textarea matInput [formControl]="getControl(field.name)" class="w3-input"></textarea>
                       </mat-form-field>
 
 
@@ -91,7 +91,8 @@
                                [formControl]="getControl(field.name)"
                                [matAutocomplete]="auto"
                                (input)="onInputChange($event, field)"
-                               (focus)="onInputFocus($event, field)">
+                               (focus)="onInputFocus($event, field)"
+                               class="w3-input">
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAutocompleteFactory(field.name)">
                           <mat-option *ngFor="let option of autocompleteOptions[field.name]" [value]="option">
                             {{ option ? option[field.name] : '' }}

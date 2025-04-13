@@ -57,7 +57,7 @@ export class PvComponent implements OnInit {
       fields: [
         { label: 'Data', name: 'data_doc', type: 'date', group: '1' },
         { label: 'Numar', name: 'numar', type: 'text', group: '2' },
-        { label: 'Categ.', name: 'den_comcat', type: 'text', group: '3' },
+        { label: 'Categ.', name: 'den_comcat', type: 'autocomplete', group: '3', sql: 'service.comenzicateg', autocomplete: true  },
         { label: 'Client', name: 'den_firma', type: 'autocomplete', group: '4', sql: 'facturi.firme', autocomplete: true },
         { label: 'P.Lucru', name: 'den_plfrm', type: 'autocomplete', group: '5', sql: 'facturi.firme_pl', autocomplete: true },
         { label: 'Subiect', name: 'asobssubiect', type: 'text', group: '6' },
