@@ -168,3 +168,29 @@ table.w3-table tr.selected {
   color: white; // poți alege orice culoare potrivită
 }
 
+.sageata {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  right: 30px;         // spațiere față de marginea din dreapta
+  bottom: 20px;        // spațiere față de marginea de jos
+  padding: 10px;
+  font-size: 20px;
+  border-radius: 50%;
+  background-color: var(--main-blue0);
+  color: #fff; 
+  text-align: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  // Regula specifică pentru iconița din interior
+  i {
+    color: #fff !important;
+  }
+}

@@ -45,7 +45,7 @@
         </button>
     </div>
 </div>
-<div class="table-container">
+<div class="table-container" #tableContainer (scroll)="onTableContainerScroll($event)">
     <table class="w3-table w3-small w3-bordered w3-striped w3-hoverable">
         <thead>
             <tr class="table-header">
@@ -129,6 +129,17 @@
         </tbody>
 
     </table>
+
+    <a 
+      aria-label="Mergi sus" 
+      title="Mergi sus" 
+      class="sageata" 
+      id="upArrow"
+      *ngIf="showScrollToTop"
+      (click)="scrollToTop()">
+      <i class="fas fa-arrow-up"></i>
+    </a>
+
 </div>
 
                 <!-- 

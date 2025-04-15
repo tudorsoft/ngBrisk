@@ -1,6 +1,6 @@
 //data-table.component.ts:
 //-----------------------
-import { Component, Input, OnInit, ViewChild, Output, EventEmitter, ChangeDetectorRef, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, Output, EventEmitter, ChangeDetectorRef, SimpleChanges, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
@@ -53,9 +53,19 @@ export class DataTableComponent implements OnInit {
     public filterFormSubject  = new BehaviorSubject<FormGroup>(new FormGroup({}));
     filterForm$ = this.filterFormSubject.asObservable();
 
-
     @ViewChild(DataTableDetailComponent)
     private dataTableDetail!: DataTableDetailComponent;
+
+    @ViewChild('tableContainer') tableContainer!: ElementRef;
+    showScrollToTop: boolean = false;
+    private scrollThreshold: number = window.innerHeight;
+    scrollToTop(): void {
+      this.tableContainer.nativeElement.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    onTableContainerScroll(event: any): void {
+      const scrollPosition = event.target.scrollTop;
+      this.showScrollToTop = scrollPosition > this.scrollThreshold;
+    }
 
     constructor(
       private fb: FormBuilder, 
