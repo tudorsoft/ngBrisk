@@ -12,10 +12,19 @@ export class LoadingInterceptor implements HttpInterceptor {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.loadingService.show();
+    
+    const isAutocomplete = req.body && req.body.autocomplete === true;
+
+    
+    if (!isAutocomplete) {
+      this.loadingService.show();
+    }
     return next.handle(req).pipe(
       finalize(() => {
-        this.loadingService.hide();
+        
+        if (!isAutocomplete) {
+          this.loadingService.hide();
+        }
         //console.log('LoadingInterceptor: Request finished', req.url);
       })
     );

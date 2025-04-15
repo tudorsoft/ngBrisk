@@ -2,15 +2,42 @@
   display: flex;
   justify-content: space-between; /* Aliniază titlul și butonul la extremități */
   align-items: center; /* Centrează vertical elementele */
-  padding-left: 8px;
+  padding: 0 8px 0 8px;
+}
+.list-top h4 {
+  padding: 0;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap; 
+  align-items: center;
+  color: white;
+  margin-bottom: 4px;
+  padding: 2px 8px 2px 8px;
+  font-size: medium;
+}
+
+.table-filter-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: #f8f9fa; // Fundal deschis
+  border-radius: 8px;
+  //box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Umbră subtilă
+  //margin: 0;
+  padding: 6px 8px 6px 8px; 
+  //border: 1px solid  var(--main-blue0); // Add a solid black border on top
 }
 
 .table-title {
-    color: var(--main-blue0); /* Albastru mai închis */
+  color: var(--main-blue0); /* Albastru mai închis */
 }
 
 .record-count {
-  font-size: 16px;
+  font-size: 14px;
   display: inline-block;
 }
 
@@ -18,7 +45,9 @@
   max-height: 100vh;  /* sau calc(100vh - [alte elemente fixe], de exemplu: calc(100vh - 120px)) */
   overflow-y: auto;
   width: 100%;
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 170px);
+  padding: 0 2px 0 2px;
+  //border-radius: 8px;
 }
 
 .table-header {
@@ -26,14 +55,12 @@
     top: 0; 
     text-align: left;
     background-color: var(--main-blue0);
-    border: 0;
 }
 .table-header th {
     color: white;
     text-align: center;
     cursor: pointer; 
     font-weight: normal;
-    padding: 8px 2px 8px 2px;
 }
 
 .table-search {
@@ -41,17 +68,18 @@
     top: 34px;
     text-align: left; 
     background-color: var(--main-blue0);
-  }
+}
 .table-search th {
-  padding: 0px 2px 2px 0px;
   font-weight:lighter; /* Titlurile de coloană bold */
+  border: 1px solid var(--main-blue0); // Add a solid black border on top
+  padding: 1px; //8px 2px 8px 2px;
 }
 
 .table-search .w3-input {
-    width: 100%; 
+    //width: 100%; 
     box-sizing: border-box; 
     background-color: var(--main-white0);
-    padding: 6px 2px 6px 2px;
+    padding: 4px 4px 4px 4px;
 }
   
   thead th .arrow {
@@ -86,26 +114,6 @@
     //color:  var(--main-blue); // Optional: Change background color for distinction
 }
 
-.table-filter-area {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  //gap: 1rem;
-  width: 100%;
-  padding: 8px;
-  background-color: #f8f9fa; // Fundal deschis
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Umbră subtilă
-}
-
-.action-buttons {
-  display: flex;
-  flex-wrap: wrap; 
-  align-items: center;
-  color: white;
-  margin-left: 8px;
-}
-
 .table-filter-reset,
 .table-filter-fields,
 .table-filter-refresh {
@@ -128,8 +136,8 @@
 .table-filter-reset button,
 .table-filter-refresh button {
   background-color:var(--main-blue0);
-  font-size: 0.8rem;       
-  padding: 0.3rem 0.6rem;  
+  font-size: 0.9rem;       
+  padding: 0.5rem 0.6rem;  
   min-width: 40px;         
   box-sizing: border-box;  
   border: none; 
@@ -137,7 +145,7 @@
   cursor: pointer;
 }
 .action-buttons button {
-  margin-right:4px;
+  margin-right: 8px;
 }
 
 .action-buttons button i, 

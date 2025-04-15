@@ -55,15 +55,22 @@ export class PvComponent implements OnInit {
   sections: SectionDefinition[] = [ 
     { label: 'Antet', name: 'antet', 
       fields: [
-        { label: 'Data', name: 'data_doc', type: 'date', group: '1' },
-        { label: 'Numar', name: 'numar', type: 'text', group: '2' },
-        { label: 'Categ.', name: 'den_comcat', type: 'autocomplete', group: '3', sql: 'service.comenzicateg', autocomplete: true  },
-        { label: 'Client', name: 'den_firma', type: 'autocomplete', group: '4', sql: 'facturi.firme', autocomplete: true },
-        { label: 'P.Lucru', name: 'den_plfrm', type: 'autocomplete', group: '5', sql: 'facturi.firme_pl', autocomplete: true },
+        { label: 'Data', name: 'data_doc', type: 'date', group: '1', width: '140px' },
+        { label: 'Numar', name: 'numar', type: 'text', group: '1', width: '100px' },
+        { label: 'Facturat', name: 'facturat', type: 'check', align: 'left', group: '1' },
+        { label: 'Categorie', name: 'den_comcat', type: 'autocomplete', group: '3', sql: 'service.comenzicateg', autocomplete: true },
+        { label: 'Client', name: 'den_firma', type: 'autocomplete', group: '4', sql: 'facturi.firme', autocomplete: true, reset: 'den_plfrm' },
+        { label: 'P.Lucru', name: 'den_plfrm', type: 'autocomplete', group: '5', sql: 'facturi.firme_pl', autocomplete: true, 
+                dependency: { 
+                  fieldName: 'den_firma',  // numele câmpului de unde se va lua id-ul firmei
+                  sql: 'firme_pl.id_firma=',
+                  sqlval: 'id_firma'
+                } 
+        },
         { label: 'Subiect', name: 'asobssubiect', type: 'text', group: '6' },
         { label: 'Descriere', name: 'obs', type: 'textarea', group: '7' },
         { label: 'Persoana', name: 'aspersclient', type: 'text', group: '8' },
-        { label: 'Facturat', name: 'facturat', type: 'check', align: 'left', group: '9' },
+        
       ]
     },
     { label: 'Manopera', name: 'manopera', displayAsTable: true,
@@ -82,7 +89,7 @@ export class PvComponent implements OnInit {
     { label: 'Pozitii', name: 'pozitii'},
     { label: 'Materiale', name: 'materiale'},
     { label: 'Observatii', name: 'observatii'},
-    { label: 'Fisiere atasate', name: 'atas'},
+    { label: 'Fisiere', name: 'atas'},
   ];
 
   @Output() dataUpdated = new EventEmitter<any[]>();

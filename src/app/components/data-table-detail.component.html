@@ -5,31 +5,30 @@
 
 <!-- Zona de detaliu: afișează header-ul cu butonul "Inapoi" și page frame-ul cu tab-uri -->
 <div   *ngIf="detailMode; else loading">
-
 <!-- Zona de detaliu cu tab-uri și câmpuri dinamice -->
-<div class="detail-data-area w3-container w3-border w3-round">
-
-    <div class="detail-top w3-container w3-light-grey w3-border w3-round w3-padding-large">
-      <button class="w3-left w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
+<div class="detail-data-area">
+    <div class="detail-top">
+      <button class="w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
+      <h5 class="detail-title">{{ title }}</h5>
     </div>
 
-    <div class="page-frame w3-container w3-border w3-round">
-      <!-- Tab-urile secțiunilor -->
-      <ul class="tabs">
-        <li *ngFor="let section of sections"
-            (click)="selectSection(section)"
-            [class.active]="activeSection === section">
-          {{ section.label }}
-        </li>
-      </ul>
+    <div class="page-frame">
+      <div class="page-frame-tabs">
+        <ul class="tabs"> <!-- Tab-urile secțiunilor -->
+          <li *ngFor="let section of sections"
+              (click)="selectSection(section)"
+              [class.active]="activeSection === section">
+            {{ section.label }}
+          </li>
+        </ul>
+      </div>
 
       <!-- Afișează câmpurile secțiunii active, dacă există -->
-      <div>
-      
-        <!-- Dacă secțiunea activă se afișează ca tabel -->
+      <div class="page-frame-content">
+        <!-- Dacă secțiunea activă se afișează ca tabel (este tabelara) -->
         <!-- //////////////////////////////////////////////////////////// -->
         <div *ngIf="activeSection?.displayAsTable; else normalFields" class="fields-container">
-          <table class="w3-table w3-bordered w3-hoverable">
+          <table class="w3-table w3-bordered w3-striped w3-hoverable ">
             <thead>
               <tr>
                 <th *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}</th>
@@ -61,48 +60,57 @@
           <div *ngIf="(activeSection?.fields || []).length > 0; else noFields" class="fields-container">
             <ng-container *ngFor="let groupFields of groupedFields">
               <div class="group-container">
-                <div *ngFor="let field of groupFields" class="detail-field">
-                 <!--<div class="labels-row" [ngStyle]="{'text-align': field.align || 'left'}">
-                    <label [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}:</label>
-                  </div>-->
-                  <div class="inputs-row" [ngStyle]="{'text-align': field.align || 'left'}">
-                    <ng-container [ngSwitch]="field.type">
-                      <mat-form-field *ngSwitchCase="'text'" appearance="outline" class="no-focus-style">
-                        <mat-label>{{ field.label }}</mat-label>  <!-- [placeholder]="field.placeholder || field.label" -->
-                        <input matInput [formControl]="getControl(field.name)" class="w3-input">
+                
+                  <ng-container *ngFor="let field of groupFields">
+                  <ng-container [ngSwitch]="field.type">
+
+                      <mat-form-field *ngSwitchCase="'text'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)">
+                        <mat-label>{{ field.label }}</mat-label>
+                        <input matInput [formControl]="getControl(field.name)">
                       </mat-form-field>
 
-                      <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="uniform-width no-focus-style">
+                      <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)">
                         <mat-label>{{ field.label }}</mat-label>
-                        <input matInput [matDatepicker]="picker" [formControl]="getControl(field.name)" class="w3-input">
+                        <input matInput [matDatepicker]="picker" [formControl]="getControl(field.name)">
                         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                       </mat-form-field>
 
-                      <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" class="uniform-width no-focus-style">
+                      <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)" style="width:100%;">
                         <mat-label>{{ field.label }}</mat-label>
-                        <textarea matInput [formControl]="getControl(field.name)" class="w3-input"></textarea>
+                        <textarea matInput [formControl]="getControl(field.name)"></textarea>
                       </mat-form-field>
+                      
+                      <ng-container *ngSwitchCase="'check'">
+                        <mat-checkbox [formControl]="getControl(field.name)" class="custom-checkbox">
+                          {{ field.label }}
+                        </mat-checkbox>
+                      </ng-container>                      
 
-
-                      <mat-form-field *ngSwitchCase="'autocomplete'" appearance="outline" class="uniform-width no-focus-style">
+                      <mat-form-field *ngSwitchCase="'autocomplete'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)"  style="width:100%;"
+                      style="padding:0;margin:0;">
                         <mat-label>{{ field.label }}</mat-label>
                         <input matInput 
                                [formControl]="getControl(field.name)"
                                [matAutocomplete]="auto"
-                               (input)="onInputChange($event, field)"
-                               (focus)="onInputFocus($event, field)"
-                               class="w3-input">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAutocompleteFactory(field.name)">
+                               (input)="onInputChange($event, field, autoTrigger)"
+                               (focus)="onInputFocus($event, field, autoTrigger)"
+                               #autoTrigger="matAutocompleteTrigger"
+                               #autoInput>
+                        <button mat-icon-button matSuffix (mousedown)="$event.stopPropagation()" (click)="togglePanel(autoTrigger, autoInput)" >
+                          <mat-icon>{{ autoTrigger?.panelOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+                        </button>
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAutocompleteFactory(field.name)" style="display:flex;">
+                          <mat-option *ngIf="isLoading[field.name]" class="loading-option" disableRipple>
+                            <mat-spinner diameter="16"></mat-spinner><!-- &nbsp;Asteptati... -->
+                          </mat-option>
                           <mat-option *ngFor="let option of autocompleteOptions[field.name]" [value]="option">
                             {{ option ? option[field.name] : '' }}
                           </mat-option>
                         </mat-autocomplete>
                       </mat-form-field>
-
                     </ng-container>
-                  </div>
-                </div>
+                  </ng-container>
               </div>
             </ng-container>
           </div>
@@ -117,14 +125,14 @@
 
     </div>
 
-    <div class="detail-bottom w3-container w3-light-grey w3-border w3-round w3-padding-large">
+    <div class="detail-bottom">
       <button class="w3-left w3-round" (click)="onCancel()"><i class="fas fa-arrow-left"></i></button>
-      <button class="w3-right w3-round" (click)="onSave()"><i class="fas fa-save"></i> Salvează</button>
+      <button class="w3-right w3-round" (click)="onSave()"><i class="fas fa-save"></i>&nbsp;&nbsp;Salvează</button>
     </div>
 
 </div>
 
 </div>
 <ng-template #loading>
-<p>Se incarca...</p>
+<p>Incarcare lista...</p>
 </ng-template> 

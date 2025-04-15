@@ -30,9 +30,20 @@ export interface ColumnDefinition {
     align?: string;
     group?: string;
     sql?: string;
+    width?: string;
     placeholder?: string;
     autocomplete?: boolean;
+    dependency?: FieldDependency;
+    reset?: string;
   }
+
+export interface FieldDependency {
+  fieldName: string; // Numele câmpului de la care depinde (ex.: "den_firma")
+  sql: string;    // Proprietatea din valoarea câmpului de la care depinde (ex.: "id_firma")
+  sqlval: string;  
+}
+
+
 
 import { MatDateFormats } from '@angular/material/core';
 export const MY_DATE_FORMATS: MatDateFormats = {

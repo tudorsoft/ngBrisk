@@ -25,7 +25,7 @@ export class MenuTree {
     const routes: Routes = [];
     menuItems.forEach(item => {
       if (item.route && item.component) {
-        console.log('Creating route for item:', item); 
+        //console.log('Creating route for item:', item); 
         const path = item.route.startsWith('/') ? item.route.substring(1) : item.route;
         routes.push({
           path: path,
@@ -38,7 +38,7 @@ export class MenuTree {
         routes.push(...this.createRoutes(item.children, guards)); // Recursiv pentru copii
       }
     });
-    console.log('Routes created:', routes);
+    //console.log('Routes created:', routes);
     return routes;
   }
 

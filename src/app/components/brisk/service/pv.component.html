@@ -1,5 +1,6 @@
 <!-- Componenta de detalii-->
 <app-data-table-detail 
+    [title]="'PROCES VERBAL'"
     [sections]="sections" 
     [currentRecordDetail]="currentRecordDetail"
     [fieldValues]="fieldValues" 
@@ -27,7 +28,7 @@
     <ng-template #noData>
       <p *ngIf="errorMessage; else noDataMessage">{{ errorMessage }}</p>
       <ng-template #noDataMessage>
-        Incarcare lista...
+        
       </ng-template>
     </ng-template>
   </div>
