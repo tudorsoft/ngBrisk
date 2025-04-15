@@ -42,10 +42,9 @@
 }
 
 .table-container {
-  max-height: 100vh;  /* sau calc(100vh - [alte elemente fixe], de exemplu: calc(100vh - 120px)) */
   overflow-y: auto;
   width: 100%;
-  max-height: calc(100vh - 170px);
+  max-height: calc(100dvh - 178px - env(safe-area-inset-bottom));
   padding: 0 2px 0 2px;
   //border-radius: 8px;
 }

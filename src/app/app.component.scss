@@ -92,7 +92,7 @@ header {
   margin-top: 52px;
   flex: 1; /* Permite containerului să ocupe tot spațiul rămas */
   overflow-y: hidden;
-  height: calc(100vh - 52px);
+  height: calc(100dvh - 52px - env(safe-area-inset-bottom));
   border: 0px solid var(--main-blue2);
 }
 

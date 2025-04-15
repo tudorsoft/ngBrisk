@@ -15,7 +15,7 @@
   position: sticky;
   bottom: 0;
   //background-color: var(--main-white);  /* sau o altă culoare care să asigure contrastul */
-  z-index: 100;
+  z-index: 1000;
   padding: 8px;
  }
 
@@ -58,23 +58,20 @@
   z-index: 10;               /* Nivel ridicat pentru a acoperi conținutul scrollabil */
 }
 .page-frame {
-  background-color: #ffffff; // Fundal curat, alb
-  border: 1px solid #e0e0e0; // Bordură subtilă
-  border-radius: 6px;          // Colțuri ușor rotunjite
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);  // Umbra discretă pentru adâncime
-  padding: 0 8px 8px 8px; 
-  //margin-top: 2px;
-  //margin-bottom: 2px;
-  color: var(--main-blue0);              // Culoare neutră pentru text
-  //height: calc(100vh - 172px); /* Ajustează 150px cu suma înălțimilor altor elemente (de ex. header, margini, etc.) */
-  height: calc(100vh - 158px - env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0 8px 8px 8px;
+  color: var(--main-blue0);
+  height: calc(100dvh - 158px - env(safe-area-inset-bottom));
+
   overflow: auto;
   position: relative;
 }
 
 .tabs {
-  background-color: #ffffff; // Fundal curat, alb
+  background-color: #ffffff;
   list-style: none;
   display: flex;
   top: 0;

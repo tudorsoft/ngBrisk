@@ -4,7 +4,7 @@
 </div>
 
 <!-- Zona de detaliu: afișează header-ul cu butonul "Inapoi" și page frame-ul cu tab-uri -->
-<div   *ngIf="detailMode; else loading">
+<div   *ngIf="detailMode;">
 <!-- Zona de detaliu cu tab-uri și câmpuri dinamice -->
 <div class="detail-data-area">
     <div class="detail-top">
@@ -133,6 +133,3 @@
 </div>
 
 </div>
-<ng-template #loading>
-<p>Incarcare lista...</p>
-</ng-template> 

@@ -4,7 +4,7 @@
   left: 0;
   top: 52px;
   width: 200px;
-  height: calc(100vh - 52px);
+  height: calc(100dvh - 52px - env(safe-area-inset-bottom));
   overflow-y: auto;
   background-color: var(--main-white0);
   color: var(--main-blue0); 
