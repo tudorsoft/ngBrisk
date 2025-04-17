@@ -27,16 +27,17 @@
       <div class="page-frame-content">
         <!-- Dacă secțiunea activă se afișează ca tabel (este tabelara) -->
         <!-- //////////////////////////////////////////////////////////// -->
-        <div *ngIf="activeSection?.displayAsTable; else normalFields" class="fields-container">
+        <div *ngIf="activeSection && activeSection.displayAs === 'table' && pageTableColumns[activeSection.name] as columns;
+             else pageFrameSection" class="fields-container">
           <table class="w3-table w3-bordered w3-striped w3-hoverable ">
             <thead>
               <tr>
-                <th *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}</th>
+                <th *ngFor="let field of columns" [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let row of getTableRows(activeSection!)">
-                <td *ngFor="let field of activeSection?.fields" [ngStyle]="{'text-align': field.align || 'left'}">
+                <td *ngFor="let field of columns" [ngStyle]="{'text-align': field.align || 'left'}">
                   <ng-container [ngSwitch]="field.type">
                     <ng-container *ngSwitchCase="'check'">
                       <span class="checkbox-display">
@@ -54,67 +55,56 @@
         </div>
         <!-- //////////////////////////////////////////////////////////// -->
 
+        <!-- Dacă secțiunea activă se afișează ca PageFrame -->
+        <!-- //////////////////////////////////////////////////////////// -->
+        <ng-template #pageFrameSection>
+        <div *ngIf="activeSection && pageFrameTabs[activeSection.name] as tabs; else normalFields" class="fields-container">
+            <mat-tab-group>
+              <mat-tab *ngFor="let tab of tabs; trackBy: trackByTabName" >
+                <ng-template matTabLabel>
+                  <span>{{ tab.label }}</span>
+                </ng-template>
+
+                <!-- campurile din taburile pageframe-ului -->
+                <div class="section-pageframe-tab-fields" *ngIf="tab.fields?.length; else noTabFields">
+                  <app-field-renderer
+                    *ngFor="let field of tab.fields; trackBy: trackByFieldName"
+                    [field]="field"
+                    [control]="getControl(field.name)">
+                  </app-field-renderer>
+                </div>
+                
+                <ng-template #noTabFields>
+                  <p>Nu există câmpuri în acest tab.</p>
+                </ng-template>
+
+
+                <ng-template #noComponent>
+                  <p>Continut pentru {{ tab.label }} nu a fost definit.</p>
+                </ng-template>
+
+              </mat-tab>
+            </mat-tab-group>
+        </div>
+        </ng-template>
+        <!-- //////////////////////////////////////////////////////////// -->
+
         <!-- Afișare normală (pentru secțiunile care nu sunt tabelare) -->
         <!-- //////////////////////////////////////////////////////////// -->
         <ng-template #normalFields>
           <div *ngIf="(activeSection?.fields || []).length > 0; else noFields" class="fields-container">
-            <ng-container *ngFor="let groupFields of groupedFields">
+            <ng-container *ngFor="let group of groupedFields; trackBy: trackByGroupIndex">
               <div class="group-container">
-                
-                  <ng-container *ngFor="let field of groupFields">
-                  <ng-container [ngSwitch]="field.type">
-
-                      <mat-form-field *ngSwitchCase="'text'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)">
-                        <mat-label>{{ field.label }}</mat-label>
-                        <input matInput [formControl]="getControl(field.name)">
-                      </mat-form-field>
-
-                      <mat-form-field *ngSwitchCase="'date'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)">
-                        <mat-label>{{ field.label }}</mat-label>
-                        <input matInput [matDatepicker]="picker" [formControl]="getControl(field.name)">
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                      </mat-form-field>
-
-                      <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)" style="width:100%;">
-                        <mat-label>{{ field.label }}</mat-label>
-                        <textarea matInput [formControl]="getControl(field.name)"></textarea>
-                      </mat-form-field>
-                      
-                      <ng-container *ngSwitchCase="'check'">
-                        <mat-checkbox [formControl]="getControl(field.name)" class="custom-checkbox">
-                          {{ field.label }}
-                        </mat-checkbox>
-                      </ng-container>                      
-
-                      <mat-form-field *ngSwitchCase="'autocomplete'" appearance="outline" class="no-focus-style" [setCustomWidth]="getFieldWidth(field)"  style="width:100%;"
-                      style="padding:0;margin:0;">
-                        <mat-label>{{ field.label }}</mat-label>
-                        <input matInput 
-                               [formControl]="getControl(field.name)"
-                               [matAutocomplete]="auto"
-                               (input)="onInputChange($event, field, autoTrigger)"
-                               (focus)="onInputFocus($event, field, autoTrigger)"
-                               #autoTrigger="matAutocompleteTrigger"
-                               #autoInput>
-                        <button mat-icon-button matSuffix (mousedown)="$event.stopPropagation()" (click)="togglePanel(autoTrigger, autoInput)" >
-                          <mat-icon>{{ autoTrigger?.panelOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
-                        </button>
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAutocompleteFactory(field.name)" style="display:flex;">
-                          <mat-option *ngIf="isLoading[field.name]" class="loading-option" disableRipple>
-                            <mat-spinner diameter="16"></mat-spinner><!-- &nbsp;Asteptati... -->
-                          </mat-option>
-                          <mat-option *ngFor="let option of autocompleteOptions[field.name]" [value]="option">
-                            {{ option ? option[field.name] : '' }}
-                          </mat-option>
-                        </mat-autocomplete>
-                      </mat-form-field>
-                    </ng-container>
-                  </ng-container>
+                <app-field-renderer
+                  *ngFor="let field of group; trackBy: trackByFieldName"
+                  [field]="field"
+                  [control]="getControl(field.name)">
+                </app-field-renderer>
               </div>
             </ng-container>
           </div>
         </ng-template>
+        
         <!-- ////////////////////////////////////////////////////////////////// -->
 
         <ng-template #noFields>

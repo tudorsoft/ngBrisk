@@ -1,0 +1,17 @@
+//fiel-renderer.component.scss:
+.no-bg-btn {
+  background: transparent !important;
+  border-radius: 50%;
+  border: none !important;
+  padding: 0px;
+  margin: 0px;
+  color: var(--main-blue0);
+}
+
+button.no-bg-btn.clear-btn {
+  ::ng-deep mat-icon {
+    padding-top: 4px;
+    font-size: 16px;
+    line-height: 16px;
+  }
+}

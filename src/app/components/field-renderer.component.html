@@ -1,0 +1,78 @@
+<!-- field-renderer.component.html -->
+<ng-container [ngSwitch]="field.type">
+      <!-- Text -->
+      <mat-form-field *ngSwitchCase="'text'" appearance="outline" [style.width]="field.width || '100%'">
+        <mat-label>{{ field.label }}</mat-label>
+        <input matInput [formControl]="control">
+      </mat-form-field>
+
+      <!-- Date -->
+      <mat-form-field *ngSwitchCase="'date'" appearance="outline" [style.width]="field.width || '100%'">
+        <mat-label>{{ field.label }}</mat-label>
+        <input matInput [matDatepicker]="picker" [formControl]="control">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Textarea -->
+      <mat-form-field *ngSwitchCase="'textarea'" appearance="outline" [style.width]="field.width || '100%'">
+        <mat-label>{{ field.label }}</mat-label>
+        <textarea matInput [formControl]="control"></textarea>
+      </mat-form-field>
+
+      <!-- Checkbox -->
+      <mat-checkbox *ngSwitchCase="'check'" [formControl]="control">
+        {{ field.label }}
+      </mat-checkbox>
+
+      <!-- Autocomplete -->
+      <mat-form-field *ngSwitchCase="'autocomplete'" appearance="outline" [style.width]="field.width || '100%'">
+        <mat-label>{{ field.label }}</mat-label>
+       
+        <input matInput
+          #autoInput
+          [formControl]="control"
+          [matAutocomplete]="auto"
+          (focus)="onInputFocus()"
+          (blur)="onInputBlur()"
+          (input)="onInputChange($event)">
+
+          <!-- Butonul de sters -->
+          <button
+            mat-icon-button
+            matPrefix
+            disableRipple
+            class="no-bg-btn clear-btn" 
+            *ngIf="control.value && isFocused"
+            aria-label="Clear"
+            (mousedown)="onClearMouseDown($event)">
+            <mat-icon>close</mat-icon>
+          </button>
+
+          <!-- Butonul de toggle -->
+          <button
+            mat-icon-button
+            matSuffix
+            disableRipple
+            class="no-bg-btn"
+            *ngIf="autoTrigger"
+            (mousedown)="$event.stopPropagation()"
+            (click)="togglePanel(autoTrigger, autoInput)">
+            <mat-icon>{{ autoTrigger.panelOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+          </button>
+
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAutocompleteFactory(field.name)">
+          <mat-option *ngIf="isLoading[field.name]" disableRipple>
+            <mat-spinner diameter="16"></mat-spinner>
+          </mat-option>
+          <mat-option *ngFor="let option of autocompleteOptions[field.name]" [value]="option">
+            {{ option[field.name] || option }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <!-- Default -->
+      <div *ngSwitchDefault>
+        {{ control.value || '' }}
+      </div>
+    </ng-container>

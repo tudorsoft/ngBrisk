@@ -1,5 +1,7 @@
 //type-definition.ts:
 //------------------
+
+//pt coloanele din ecranul lista
 export interface ColumnDefinition {
     label: string;
     name: string;
@@ -14,11 +16,13 @@ export interface ColumnDefinition {
     pictureMapping?: (value: any) => string;
   }
 
+
+//pt ecranul de detalii
   export interface SectionDefinition {
     label: string;
     name: string;
     fields?: FieldDefinition[];
-    displayAsTable?: boolean;
+    displayAs?: string;
     required?: number;
   }
 
@@ -31,10 +35,13 @@ export interface ColumnDefinition {
     group?: string;
     sql?: string;
     width?: string;
+    icon?: string;
     placeholder?: string;
     autocomplete?: boolean;
     dependency?: FieldDependency;
     reset?: string;
+    colOrder?: number; //pt sectiunile displayAs table daca e completat apare ca si coloana in tabel
+    fields?: FieldDefinition[];
   }
 
 export interface FieldDependency {
@@ -43,6 +50,12 @@ export interface FieldDependency {
   sqlval: string;  
 }
 
+export interface TabDefinition {
+  label: string; // Textul afișat pe tab
+  name: string;  // Un identificator unic pentru tab (poate fi folosit și în logica componentelor)
+  icon?: string;
+  fields?: FieldDefinition[];
+}
 
 
 import { MatDateFormats } from '@angular/material/core';

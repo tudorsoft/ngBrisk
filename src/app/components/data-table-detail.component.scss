@@ -117,20 +117,21 @@
   }
 }
 
+
+
 /* Containerul general pentru toate grupurile */
 .fields-container {
   width: 100%; 
   display: block;
 }
 
-/* Container pentru fiecare grup de câmpuri (de exemplu, "sosire" sau "plecare") */
 .group-container {
-  display: flex;             /* Elemente aliniate pe rând */
-  flex-direction: row;       
-  gap: 16px;                 /* Spațiere între câmpuri */
-  align-items: center;       /* Aliniere verticală */
-  flex-wrap: nowrap;         /* Nu permite ruperea pe mai multe linii */
+  //padding-top: 4px;
   width: 100%;
+}
+/* Container pentru fiecare grup de câmpuri (de exemplu, "sosire" sau "plecare") */
+.group-container > app-field-renderer {
+  padding-right: 8px;
 }
 
 .fields-container table.w3-table {
@@ -154,3 +155,90 @@
   color: white;
 }
 
+
+
+.section-pageframe-tab-fields {
+  padding-top: 8px;
+}
+
+
+/*
+// 1) Indicator (underline)
+.mat-mdc-tab-group .mdc-tab-indicator__content--underline {
+  background-color: var(--main-blue0) !important;
+  height: 1px !important;
+}
+
+// 2) Bara de tab-uri (tab‑bar)
+.mat-mdc-tab-group .mat-mdc-tab-header {
+background-color: red !important;
+  //height: 40px !important;
+}
+
+// 3) Tab‑urile inactive (text) 
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab:not(.mdc-tab--active) .mdc-tab__content {
+  background-color: lightgreen !important; // stiluri pe containerul content 
+  & .mdc-tab__text-label { // label‑ul din interior
+    color: yellow !important;
+    font-weight: 400 !important;
+  }
+}
+
+// 4) Tab‑ul activ
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab.mdc-tab--active .mdc-tab__content {
+  background-color: lightblue !important; // stiluri pe containerul content
+  & .mdc-tab__text-label { // label‑ul din interior 
+    color: darkblue !important;
+    font-weight: 600 !important;
+  }
+}
+
+// 5) Conţinutul paginii (tab body)
+.mat-mdc-tab-body-wrapper { 
+  //padding: 16px !important;
+  //background: yellow !important;
+  color: var(--main-blue0) !important;
+}
+*/
+
+
+// 2) Bara de tab-uri (tab‑bar)
+.mat-mdc-tab-group .mat-mdc-tab-header {
+  //background-color: red !important;
+  //height: 60px !important;
+  //border: 1px solid #e0e0e0;
+  }
+
+// 3) Tab‑urile inactive (text) 
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab:not(.mdc-tab--active) .mdc-tab__content {
+  //background-color: lightgreen !important; // stiluri pe containerul content 
+  & .mdc-tab__text-label { // label‑ul din interior
+    //color: yellow !important;
+    //font-weight: 400 !important;
+  }
+}
+
+// 4) Tab‑ul activ
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab.mdc-tab--active .mdc-tab__content {
+  //background-color: lightblue !important; // stiluri pe containerul content
+  & .mdc-tab__text-label { // label‑ul din interior 
+    //color: darkblue !important;
+    //font-weight: 600 !important;
+  }
+}
+
+// 5) Conţinutul paginii (tab body)
+.mat-mdc-tab-body-wrapper { 
+  //padding: 8px !important;
+  //background: yellow !important;
+  color: var(--main-blue0) !important;
+}
+
+.mat-mdc-tab-group .mat-mdc-tab-header {
+  top: -8px;
+  //border: 1px solid #e0e0e0;
+}
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab {
+  height: 36px;
+  //border: 1px solid #e0e0e0;
+}

@@ -73,23 +73,39 @@ export class PvComponent implements OnInit {
         
       ]
     },
-    { label: 'Manopera', name: 'manopera', displayAsTable: true,
+    { label: 'Manopera', name: 'manopera', displayAs: 'table',
       fields: [
-        { label: 'Persoana', name: 'persoana', type: 'text' },
-        { label: 'Tip', name: 'cod_manop', type: 'combo' },
-        { label: 'Sosire', name: 'sosire_data', type: 'date', group: 'sosire' },
-        { label: 'ora', name: 'sosire_ora', type: 'numeric', group: 'sosire' },
-        { label: 'min.', name: 'sosire_minut', type: 'combo', values: ['00','05','10','15','20','25','30','35','40','45','50','55'], group: 'sosire' },
-        { label: 'Plecare', name: 'plecare_data', type: 'date', group: 'plecare' },
-        { label: 'ora', name: 'plecare_ora', type: 'numeric', group: 'plecare' },
-        { label: 'min.', name: 'plecare_minut', type: 'combo', values: ['00','05','10','15','20','25','30','35','40','45','50','55'], group: 'plecare' },
+        { label: 'Persoana', name: 'persoana'     , type: 'text'   , group: 'persoana', colOrder: 1 },
+        { label: 'Sosire'  , name: 'sosire_data'  , type: 'date'   , group: 'sosire'  , colOrder: 2 },
+        { label: 'ora'     , name: 'sosire_ora'   , type: 'numeric', group: 'sosire'  , colOrder: 3 },
+        { label: 'min.'    , name: 'sosire_minut' , type: 'combo'  , group: 'sosire'  , colOrder: 4  , values: ['00','05','10','15','20','25','30','35','40','45','50','55'] },
+        { label: 'Plecare' , name: 'plecare_data' , type: 'date'   , group: 'plecare' , colOrder: 5 },
+        { label: 'ora'     , name: 'plecare_ora'  , type: 'numeric', group: 'plecare' , colOrder: 6 },
+        { label: 'min.'    , name: 'plecare_minut', type: 'combo'  , group: 'plecare' , colOrder: 7  , values: ['00','05','10','15','20','25','30','35','40','45','50','55'] },
+        { label: 'Tip'     , name: 'cod_manop'    , type: 'combo'  , group: 'manopera', colOrder: 8 },
         // ...
       ]
     },
     { label: 'Pozitii', name: 'pozitii'},
     { label: 'Materiale', name: 'materiale'},
     { label: 'Observatii', name: 'observatii'},
-    { label: 'Fisiere', name: 'atas'},
+    { label: 'Fisiere', name: 'atas', displayAs: 'pageframe',
+      fields: [
+        { label: 'P.V.', name: 'proceseVerbale', type: "tab" },
+        { label: 'Punct Lucru', name: 'docPunctLucru', type: "tab" },
+        { label: 'Utilaje', name: 'docUtilaje', type: "tab", 
+                fields: [
+                  { label: 'Categorie', name: 'den_comcat', type: 'autocomplete', group: '3', sql: 'service.comenzicateg', autocomplete: true },
+                  { label: 'Subiect', name: 'asobssubiect', type: 'text', group: '6' },
+                  { label: 'Descriere', name: 'obs', type: 'textarea', group: '7' },
+                  { label: 'Persoana', name: 'aspersclient', type: 'text', group: '8' },
+                  
+                ]
+        },
+        { label: 'Galerie', name: 'galerieFoto', type: "tab" }
+      ]
+
+    },
   ];
 
   @Output() dataUpdated = new EventEmitter<any[]>();
@@ -112,13 +128,6 @@ export class PvComponent implements OnInit {
 
   ngOnInit() {
     this.fetchData();
-  }
-
-  ngAfterViewInit(): void {
-    // La acest moment, 'wrapper' ar trebui să fie disponibil
-    //if (!this.wrapper) {
-    //  console.error('Wrapper-ul pentru data-table-detail nu a fost găsit!');
-    //}
   }
 
   // Funcție pentru a actualiza valorile câmpurilor de filtrare

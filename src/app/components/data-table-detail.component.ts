@@ -7,7 +7,7 @@ import { debounceTime, startWith, switchMap, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormControl, FormsModule, ReactiveFormsModule, Validators  } from '@angular/forms';
-import { SectionDefinition, FieldDefinition, MY_DATE_FORMATS } from './type-definition';
+import { SectionDefinition, FieldDefinition, TabDefinition, MY_DATE_FORMATS } from './type-definition';
 import { StorageService } from '../services/storage.service';
 import { HttpProxyService } from '../services/http-proxy.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,14 +19,16 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatNativeDateModule } from '@angular/material/core';
-import { getSqlString } from '../utils/sql.utils';
-import { SetCustomWidthDirective } from './directive-custom-width';
+import { FieldRendererComponent } from './field-renderer.component';
 
 @Component({
   selector: 'app-data-table-detail',
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatCheckboxModule, 
-    MatDatepickerModule, MatNativeDateModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, SetCustomWidthDirective], 
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatCheckboxModule, MatTabsModule, 
+    MatDatepickerModule, MatNativeDateModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule, 
+    FieldRendererComponent], 
   templateUrl: './data-table-detail.component.html',
   styleUrls: ['./data-table-detail.component.scss'], 
   encapsulation: ViewEncapsulation.None
@@ -45,6 +47,8 @@ export class DataTableDetailComponent implements OnInit {
   currentRecord: any = null;
   groupedFields: FieldDefinition[][] = [];
   autocompleteOptions: { [fieldName: string]: any[] } = {};
+  pageTableColumns:  { [sectionName: string]: FieldDefinition[] } = {};
+  pageFrameTabs: { [sectionName: string]: TabDefinition[] } = {};
 
   constructor(
     private storageService: StorageService,
@@ -52,6 +56,16 @@ export class DataTableDetailComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private fb: FormBuilder
   ) { }
+
+trackByTabName(index: number, tab: TabDefinition): string {
+  return tab.name;
+}
+trackByGroupIndex(index: number, group: FieldDefinition[]): number {
+  return index;
+}
+trackByFieldName(index: number, field: FieldDefinition): string {
+  return field.name;
+}
 
 ngOnInit(): void {
   const group: { [key: string]: FormControl } = {};  // Inițializare dinamică a formularului, pe baza secțiunilor și câmpurilor
@@ -62,6 +76,68 @@ ngOnInit(): void {
     });
   });
   this.formGroup = this.fb.group(group);
+  this.sectionsTableColumns();
+  this.sectionsPageFrameTabs();
+}
+
+sectionsTableColumns(): void {
+  // Iterează prin secțiuni și selectează pe cele care au displayAs "table"
+  this.pageTableColumns = {};
+  this.sections.forEach(section => {
+    if (section.displayAs === 'table' && section.fields && section.fields.length) {
+      const columns: { [key: string]: FieldDefinition } = {};
+      section.fields.forEach(field => {
+        if (field.colOrder ) {
+          const key = field.name;
+          if (!columns[key]) {
+            columns[key] = { 
+                label:        field.label,
+                name:         field.name,
+                type:         field.type,
+                values:       field?.values,
+                align:        field?.align,
+                group:        field?.group,
+                sql:          field?.sql,
+                width:        field?.width,
+                icon:         field?.icon,
+                placeholder:  field?.placeholder,
+                autocomplete: field?.autocomplete,
+                dependency:   field?.dependency,
+                reset:        field?.reset,
+                colOrder:     field?.colOrder
+             } as FieldDefinition;
+          }
+
+        }
+      });
+      this.pageTableColumns[section.name] = Object.keys(columns).map(key => columns[key]);
+    }
+  });
+}
+
+sectionsPageFrameTabs(): void {
+  this.pageFrameTabs = {};
+  this.sections.forEach(section => {
+    if (section.displayAs === 'pageframe' && section.fields) {
+      const tabs: { [key: string]: TabDefinition } = {};
+
+      section.fields.forEach(field => {
+        if (field.type === 'tab') {
+          const key = field.name;
+          // Inițializez TabDefinition cu array‑ul de sub‑câmpuri direct din field.fields
+          tabs[key] = {
+            label: field.label,
+            name:  field.name,
+            icon:  field.icon,
+            // folosește direct sub‑câmpurile, sau [] dacă nu există
+            fields: field.fields ?? []
+          };
+        }
+      });
+
+      this.pageFrameTabs[section.name] = Object.values(tabs);
+    }
+  });
 }
 
 getControl(name: string): FormControl { // Metodă helper care returnează controlul ca FormControl
@@ -93,21 +169,17 @@ getGroupedFields(section: SectionDefinition): FieldDefinition[][] {
   return Object.keys(groups).map(key => groups[key]); // Transformăm obiectul într-un array de array-uri
 }
 
-getTableRows(section: SectionDefinition): any[] {
-  if (this.currentRecordDetail && Array.isArray(this.currentRecordDetail)) {
-    // Dacă secțiunea este "Manopera", presupunem că datele tabelare se află în record.manopera
-    if (section.name === 'manopera') {
-      return this.currentRecordDetail[0]?.manopera || [];
-    }
-    // Pentru celelalte secțiuni, folosește filtrarea standard
-    return this.currentRecordDetail.filter((record: any) => record.name === section.name);
-  }
-  return [];
-}
 
-  ngAfterViewInit() {
-    // codul tău pentru măsurare, etc.
+getTableRows(section: SectionDefinition): any[] {
+  // presupunem că this.currentRecordDetail[0] este obiectul principal
+  const rec = this.currentRecordDetail && this.currentRecordDetail[0];
+  if (!rec) {
+    return [];
   }
+  // dacă secțiunea e tabelară, rec[section.name] ar trebui să fie un array de rânduri
+  const rows = rec[section.name];
+  return Array.isArray(rows) ? rows : [];
+}
 
   getFieldDefinition(fieldName: string): FieldDefinition | undefined {
     if (!this.activeSection || !this.activeSection.fields) {
@@ -167,106 +239,5 @@ getTableRows(section: SectionDefinition): any[] {
     this.formGroup = this.fb.group(controls); // Construim FormGroup-ul pe baza controlurilor adunate
     this.cd.detectChanges();
   }
-
-  isLoading: { [key: string]: boolean } = {};
-  triggerAutocomplete(field: FieldDefinition, inputElement: HTMLInputElement): void {
-    //if ( inputElement.value && inputElement.value.length >= 0 ) { //comentez pt a putea deschide toata lista daca da doar click pe buton
-      let sqlDep = '';
-      if (field.dependency) {
-        const depControl = this.getControl(field.dependency.fieldName);
-        const depValue = depControl.value;
-        //console.log(this.currentRecord);
-        if (depValue && field.dependency.sql && field.dependency.sqlval) {
-          if (typeof depValue === 'object') {
-            sqlDep = field.dependency.sql + `${depValue[field.dependency.sqlval]}`; // firme_pl.id_firma=${firma_id}
-          } else {
-            sqlDep = field.dependency.sql + `${this.currentRecord[field.dependency.sqlval]}`;
-          }
-          //console.log('sqlDep: ', sqlDep);
-        } else {
-          this.autocompleteOptions[field.name] = []; // Dacă nu există o valoare validă de la câmpul dependent, putem opțional să setăm lista la goală
-          return;
-        }
-      }
-      let sqlQuery = getSqlString(field.sql || '', inputElement.value,  sqlDep || '') || '';
-      this.isLoading[field.name] = true;
-      const body: { [key: string]: any } = {
-        autocomplete: true,
-        sql: sqlQuery
-      };
-      this.httpProxyService.post<any[]>(`${this.storageService.cDatabaseUrl}/wngSQL`, body,
-         undefined, new HttpHeaders({ 'Content-Type': 'application/json' })
-      ).subscribe(
-        (options) => {
-          this.autocompleteOptions[field.name] = options;
-          this.isLoading[field.name] = false;
-          this.cd.detectChanges();
-        },
-        (error) => {
-          console.error('Autocomplete error:', error);
-          this.autocompleteOptions[field.name] = [];
-          this.isLoading[field.name] = false;
-          this.cd.detectChanges();
-        }
-      );
-    //} else {
-    //  console.log('triggerAutocomplete: not inputElement');
-    //  // Dacă valoarea nu este suficientă pentru autocomplete, golim opțiunile
-    //  this.autocompleteOptions[field.name] = [];
-    //}
-  }
-
-  displayAutocompleteFactory(fieldName: string): (option: any) => string {
-    return (option: any): string => {
-      if (!option) {
-        return '';
-      }
-      if (typeof option === 'string') {
-        return option;
-      }
-      return option[fieldName] ? option[fieldName] : '';
-    };
-  }
-
-private suppressAutoOpen = false;
-togglePanel(trigger: MatAutocompleteTrigger, inputElement: HTMLInputElement): void {
-  if (trigger.panelOpen) {
-    this.suppressAutoOpen = true;
-    trigger.closePanel();
-    inputElement.blur();
-  } else {
-    this.suppressAutoOpen = false;
-    trigger.openPanel();
-    inputElement.focus();
-  }
-}
-onInputFocus(event: Event, field: FieldDefinition, trigger: MatAutocompleteTrigger): void {
-  if (this.suppressAutoOpen) {
-    trigger.closePanel();
-    const inputElement = event.target as HTMLInputElement;
-    inputElement.blur();
-    this.suppressAutoOpen = false;
-    return;
-  }
-  const target = event.target;
-  if (target) {
-    const inputElement = target as HTMLInputElement;
-    this.triggerAutocomplete(field, inputElement);
-  }
-}
-onInputChange(event: Event, field: any, trigger: MatAutocompleteTrigger): void {
-  const target = event.target;
-  if (target) {
-    const inputElement = target as HTMLInputElement;
-    this.triggerAutocomplete(field, inputElement);
-   
-    if (field.reset) {
-      this.getControl(field.reset).setValue(null);
-      this.autocompleteOptions[field.reset] = [];
-      this.getControl(field.reset).updateValueAndValidity();
-    };
-
-  }
-}
 
 } 
