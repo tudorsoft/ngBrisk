@@ -4,7 +4,7 @@
 </div>
 
 <!-- Zona de detaliu: afișează header-ul cu butonul "Inapoi" și page frame-ul cu tab-uri -->
-<div   *ngIf="detailMode;">
+<div   *ngIf="detailMode && activeSection;">
 <!-- Zona de detaliu cu tab-uri și câmpuri dinamice -->
 <div class="detail-data-area">
     <div class="detail-top">
@@ -13,106 +13,40 @@
     </div>
 
     <div class="page-frame">
-      <div class="page-frame-tabs">
-        <ul class="tabs"> <!-- Tab-urile secțiunilor -->
-          <li *ngFor="let section of sections"
-              (click)="selectSection(section)"
-              [class.active]="activeSection === section">
-            {{ section.label }}
-          </li>
-        </ul>
-      </div>
+      <mat-tab-group
+          class="top-tabs"
+          [selectedIndex]="selectedSectionIndex"
+          (selectedIndexChange)="onSectionChange($event)"
+          headerPosition="above"
+          dynamicHeight>
+      
+        <mat-tab *ngFor="let section of sections; let i = index" [label]="section.label">
+       
 
-      <!-- Afișează câmpurile secțiunii active, dacă există -->
-      <div class="page-frame-content">
-        <!-- Dacă secțiunea activă se afișează ca tabel (este tabelara) -->
-        <!-- //////////////////////////////////////////////////////////// -->
-        <div *ngIf="activeSection && activeSection.displayAs === 'table' && pageTableColumns[activeSection.name] as columns;
-             else pageFrameSection" class="fields-container">
-          <table class="w3-table w3-bordered w3-striped w3-hoverable ">
-            <thead>
-              <tr>
-                <th *ngFor="let field of columns" [ngStyle]="{'text-align': field.align || 'left'}">{{ field.label }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of getTableRows(activeSection!)">
-                <td *ngFor="let field of columns" [ngStyle]="{'text-align': field.align || 'left'}">
-                  <ng-container [ngSwitch]="field.type">
-                    <ng-container *ngSwitchCase="'check'">
-                      <span class="checkbox-display">
-                        {{ row[field.name] == 1 ? '✔' : '' }}
-                      </span>
-                    </ng-container>
-                    <ng-container *ngSwitchDefault>
-                      <span>{{ row[field.name] || '' }}</span>
-                    </ng-container>
+            <!-- Afișează câmpurile secțiunii active, dacă există -->
+            <div class="page-frame-content">
+             
+              <!-- Afișare normală (pentru secțiunile care nu sunt tabelare) -->
+              <ng-container *ngIf="!section.displayAs || (section.displayAs !== 'table' && section.displayAs !== 'pageframe')">
+                <ng-container *ngIf="(section.fields || []).length; else noFields">
+                  <ng-container *ngFor="let group of getGroupedFields(section)">
+                    <div class="group-container">
+                      <app-field-renderer
+                        *ngFor="let field of group"
+                        [field]="field"
+                        [control]="getControl(field.name)">
+                      </app-field-renderer>
+                    </div>
                   </ng-container>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- //////////////////////////////////////////////////////////// -->
-
-        <!-- Dacă secțiunea activă se afișează ca PageFrame -->
-        <!-- //////////////////////////////////////////////////////////// -->
-        <ng-template #pageFrameSection>
-        <div *ngIf="activeSection && pageFrameTabs[activeSection.name] as tabs; else normalFields" class="fields-container">
-            <mat-tab-group>
-              <mat-tab *ngFor="let tab of tabs; trackBy: trackByTabName" >
-                <ng-template matTabLabel>
-                  <span>{{ tab.label }}</span>
+                </ng-container>
+                <ng-template #noFields>
+                  <p>Nu există câmpuri de afișat pentru această secțiune.</p>
                 </ng-template>
-
-                <!-- campurile din taburile pageframe-ului -->
-                <div class="section-pageframe-tab-fields" *ngIf="tab.fields?.length; else noTabFields">
-                  <app-field-renderer
-                    *ngFor="let field of tab.fields; trackBy: trackByFieldName"
-                    [field]="field"
-                    [control]="getControl(field.name)">
-                  </app-field-renderer>
-                </div>
-                
-                <ng-template #noTabFields>
-                  <p>Nu există câmpuri în acest tab.</p>
-                </ng-template>
-
-
-                <ng-template #noComponent>
-                  <p>Continut pentru {{ tab.label }} nu a fost definit.</p>
-                </ng-template>
-
-              </mat-tab>
-            </mat-tab-group>
-        </div>
-        </ng-template>
-        <!-- //////////////////////////////////////////////////////////// -->
-
-        <!-- Afișare normală (pentru secțiunile care nu sunt tabelare) -->
-        <!-- //////////////////////////////////////////////////////////// -->
-        <ng-template #normalFields>
-          <div *ngIf="(activeSection?.fields || []).length > 0; else noFields" class="fields-container">
-            <ng-container *ngFor="let group of groupedFields; trackBy: trackByGroupIndex">
-              <div class="group-container">
-                <app-field-renderer
-                  *ngFor="let field of group; trackBy: trackByFieldName"
-                  [field]="field"
-                  [control]="getControl(field.name)">
-                </app-field-renderer>
-              </div>
-            </ng-container>
-          </div>
-        </ng-template>
-        
-        <!-- ////////////////////////////////////////////////////////////////// -->
-
-        <ng-template #noFields>
-          <p>Nu există câmpuri de afișat pentru această secțiune.</p>
-        </ng-template>
-        
-      </div>
-
+              </ng-container>
+              
+            </div>
+        </mat-tab>
+      </mat-tab-group>
     </div>
 
     <div class="detail-bottom">

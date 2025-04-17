@@ -43,18 +43,20 @@ export class DataTableDetailComponent implements OnInit {
 
   formGroup!: FormGroup;
   detailMode: boolean = false;
-  activeSection: SectionDefinition | null = null;
   currentRecord: any = null;
   groupedFields: FieldDefinition[][] = [];
   autocompleteOptions: { [fieldName: string]: any[] } = {};
   pageTableColumns:  { [sectionName: string]: FieldDefinition[] } = {};
   pageFrameTabs: { [sectionName: string]: TabDefinition[] } = {};
+  
+  selectedSectionIndex = 0;
+  activeSection: SectionDefinition = { label: '', name: '', fields: [] };
 
   constructor(
     private storageService: StorageService,
     private httpProxyService: HttpProxyService,
     private cd: ChangeDetectorRef,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) { }
 
 trackByTabName(index: number, tab: TabDefinition): string {
@@ -68,16 +70,24 @@ trackByFieldName(index: number, field: FieldDefinition): string {
 }
 
 ngOnInit(): void {
-  const group: { [key: string]: FormControl } = {};  // Inițializare dinamică a formularului, pe baza secțiunilor și câmpurilor
-  this.sections.forEach(section => {
-    section.fields?.forEach(field => {
-      // Se poate aplica logica de validare specifică fiecărui tip
-      group[field.name] = this.fb.control('', Validators.required);
-    });
-  });
-  this.formGroup = this.fb.group(group);
+  // 1. pregătește structurile auxiliare
   this.sectionsTableColumns();
   this.sectionsPageFrameTabs();
+
+  // 2. alege primul tab
+  this.setActiveSection(0);
+
+  // 3. inițializează formularul (dacă vrei)
+  this.buildForm(); 
+}
+
+ngOnChanges(changes: SimpleChanges) {
+  if (changes['sections'] && changes['sections'].currentValue && this.sections.length) {
+    // când lista de secțiuni se schimbă, refacem datele și selectăm prima:
+    this.sectionsTableColumns();
+    this.sectionsPageFrameTabs();
+    this.setActiveSection(0);
+  }
 }
 
 sectionsTableColumns(): void {
@@ -140,14 +150,19 @@ sectionsPageFrameTabs(): void {
   });
 }
 
+onSectionChange(idx: number) {
+  this.setActiveSection(idx);
+}
+
+private setActiveSection(idx: number) {
+  this.selectedSectionIndex = idx;
+  this.activeSection = this.sections[idx];
+  this.groupedFields = this.getGroupedFields(this.activeSection!);
+}
+
 getControl(name: string): FormControl { // Metodă helper care returnează controlul ca FormControl
   const control = this.formGroup.get(name) as FormControl;
   return control;
-}
-
-selectSection(section: SectionDefinition): void {
-  this.activeSection = section;
-  this.groupedFields = this.getGroupedFields(section);
 }
 
 getFieldWidth(field: FieldDefinition): string {
@@ -206,18 +221,23 @@ getTableRows(section: SectionDefinition): any[] {
   }
 
   openDetail(record: any): void {
-    //console.log('openDetail primit record:', record);
-    this.detailMode = true;
-    this.currentRecord = record;
-    this.currentRecordDetail = [record];
-    this.fieldValues = { ...record };
-    if (this.sections && this.sections.length > 0) {
-      this.activeSection = this.sections[0];
-      this.groupedFields = this.getGroupedFields(this.activeSection); // Actualizează groupedFields doar când activeSection se stabilește
-    }
-  
-    this.buildForm();
-    this.cd.detectChanges();
+ // 1. aduce datele
+ this.detailMode = true;
+ this.currentRecord = record;
+ this.currentRecordDetail = [record];
+ this.fieldValues = { ...record };
+
+ // 2. (re)‑pregătește structurile
+ this.sectionsTableColumns();
+ this.sectionsPageFrameTabs();
+
+ // 3. selectează prima secțiune
+ this.setActiveSection(0);
+
+ // 4. (re)‑construiește formGroup cu valorile primite
+ this.buildForm();
+
+ this.cd.detectChanges();
   }
 
   buildForm(): void {
